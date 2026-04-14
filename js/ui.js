@@ -27,6 +27,16 @@ function renderMain() {
 
   const sessions = plan.sessions.filter(s => s.week === selectedWeek);
 
+  // Hvis ingen pas → vis info
+  if (sessions.length === 0) {
+    const empty = document.createElement("div");
+    empty.style.padding = "10px 0";
+    empty.style.color = "#777";
+    empty.textContent = "Ingen træningspas i denne uge endnu.";
+    weekCard.appendChild(empty);
+  }
+
+  // Vis alle pas
   sessions.forEach((s, i) => {
     const row = document.createElement("div");
     row.className = "session-row";
@@ -45,6 +55,14 @@ function renderMain() {
 
     weekCard.appendChild(row);
   });
+
+  // --- TILFØJ PAS KNAP ---
+  const addBtn = document.createElement("button");
+  addBtn.textContent = "+ Tilføj pas";
+  addBtn.style.marginTop = "15px";
+  addBtn.onclick = addSession;
+
+  weekCard.appendChild(addBtn);
 
   main.appendChild(weekCard);
 }
