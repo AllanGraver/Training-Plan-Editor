@@ -8,11 +8,17 @@ let plan = {
 let selectedWeek = 1;
 let selectedSessionIndex = null;
 
+/* -----------------------------------
+   REDIGER PAS
+----------------------------------- */
 function editSession(index) {
   selectedSessionIndex = index;
   renderEditor();
 }
 
+/* -----------------------------------
+   RENDER EDITOR (højre panel)
+----------------------------------- */
 function renderEditor() {
   const editorDiv = document.getElementById("sessionEditor");
   const previewDiv = document.getElementById("jsonPreview");
@@ -53,6 +59,9 @@ function renderEditor() {
   previewDiv.textContent = JSON.stringify(session, null, 2);
 }
 
+/* -----------------------------------
+   GEM PAS
+----------------------------------- */
 function saveSession() {
   const sessions = plan.sessions.filter(s => s.week === selectedWeek);
   const session = sessions[selectedSessionIndex];
@@ -65,6 +74,9 @@ function saveSession() {
   renderEditor();
 }
 
+/* -----------------------------------
+   TILFØJ NYT PAS
+----------------------------------- */
 function addSession() {
   plan.sessions.push({
     week: selectedWeek,
@@ -76,10 +88,17 @@ function addSession() {
     segments: []
   });
 
+  // vælg det nyeste pas i ugen
+  const sessions = plan.sessions.filter(s => s.week === selectedWeek);
+  selectedSessionIndex = sessions.length - 1;
+
   renderMain();
+  renderEditor();
 }
 
-/* INIT */
+/* -----------------------------------
+   INIT
+----------------------------------- */
 renderLibrary();
 renderWeeks();
 renderMain();
