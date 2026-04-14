@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8" />
+  <title>Træningsplan Editor</title>
+
+  <link rel="stylesheet" href="vendor/jsoneditor.min.css">
+  <link rel="stylesheet" href="css/style.css">
+
+  <script src="vendor/jsoneditor.min.js"></script>
+</head>
+
+<body>
+
+  <div id="sidebar">
+    <h2>Planer</h2>
+    <div id="planLibrary"></div>
+
+    <button onclick="savePlan()">Gem plan</button>
+    <button onclick="savePlanAs()">Gem som ny</button>
+    <button onclick="exportPlan()">Eksportér</button>
+    <button onclick="importPlan()">Importér</button>
+
+    <hr>
+
+    <h2>Uger</h2>
+    <div id="weekList"></div>
+    <button onclick="addSession()">+ Tilføj pas</button>
+  </div>
+
+  <div id="main"></div>
+
+  <div id="editorPanel">
+    <h2>Rediger pas</h2>
+    <div id="sessionEditor">Vælg et pas…</div>
+
+    <h3>JSON</h3>
+    <div id="jsonPreview"></div>
+  </div>
+
+  <script src="js/library.js"></script>
+  <script src="js/segments.js"></script>
+  <script src="js/autocalc.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>
