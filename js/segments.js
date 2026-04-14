@@ -1,152 +1,153 @@
+/* ---------------------------------------------------------
+   VISUEL INTERVAL-EDITOR + SEGMENT-OVERBLIK
+--------------------------------------------------------- */
+
 function editSegments() {
   const session = plan.sessions.filter(s => s.week === selectedWeek)[selectedSessionIndex];
 
-  // Åbn modal
-  const modal = window.open("", "Segments", "width=750,height=900");
+  const editorDiv = document.getElementById("sessionEditor");
+  editorDiv.innerHTML = "<h3>Segmenter</h3>";
 
-  // Ryd alt indhold
-  modal.document.body.innerHTML = "";
+  /* ---------------------------------------------------------
+     VISUELT OVERBLIK OVER EKSISTERENDE SEGMENTER
+  --------------------------------------------------------- */
 
-  // Titel
-  const title = modal.document.createElement("h2");
-  title.textContent = "Rediger segmenter";
-  modal.document.body.appendChild(title);
+  const container = document.createElement("div");
+  container.style.display = "flex";
+  container.style.flexDirection = "column";
+  container.style.gap = "15px";
+  editorDiv.appendChild(container);
 
-  // Container til JSONEditor
-  const container = modal.document.createElement("div");
-  container.style.height = "400px";
-  container.style.border = "1px solid #ccc";
-  container.style.marginBottom = "15px";
-  modal.document.body.appendChild(container);
+  session.segments.forEach((seg, segIndex) => {
+    const segCard = document.createElement("div");
+    segCard.style.border = "1px solid #ccc";
+    segCard.style.padding = "10px";
+    segCard.style.borderRadius = "6px";
+    segCard.style.background = "#fafafa";
 
-  // JSONEditor
-  const editor = new JSONEditor(container, { mode: "tree" });
-  editor.set(session.segments);
+    segCard.innerHTML = `
+      <strong>Segment ${segIndex + 1}</strong><br>
+      <label>Type:</label>
+      <input value="${seg.type}" data-seg="${segIndex}" data-field="type" style="width:100%; margin-bottom:5px;">
+    `;
 
-  /* -----------------------------
-     PRESETS
-  ------------------------------ */
-  const PRESETS = {
-    "30-20-10": {
-      type: "interval_block",
-      repetitions: 3,
-      steps: [
-        { duration_min: 0.5, note: "30 sek hårdt" },
-        { duration_min: 0.333, note: "20 sek moderat" },
-        { duration_min: 0.166, note: "10 sek hurtigt" }
-      ]
-    },
-    "Fartleg": {
-      type: "interval_block",
-      repetitions: 6,
-      steps: [
-        { duration_min: 2, note: "2 min hurtigt" },
-        { duration_min: 1, note: "1 min roligt" }
-      ]
-    },
-    "Pyramide": {
-      type: "interval_block",
-      repetitions: 1,
-      steps: [
-        { duration_min: 1, note: "1 min hårdt" },
-        { duration_min: 2, note: "2 min hårdt" },
-        { duration_min: 3, note: "3 min hårdt" },
-        { duration_min: 2, note: "2 min hårdt" },
-        { duration_min: 1, note: "1 min hårdt" }
-      ]
-    },
-    "Progressivt løb": {
-      type: "interval_block",
-      repetitions: 1,
-      steps: [
-        { duration_min: 10, note: "Roligt" },
-        { duration_min: 10, note: "Moderat" },
-        { duration_min: 10, note: "Hårdt" }
-      ]
+    // Gentagelser
+    if (seg.type === "interval_block") {
+      const repLabel = document.createElement("div");
+      repLabel.innerHTML = "<label>Gentagelser:</label>";
+      segCard.appendChild(repLabel);
+
+      const repInput = document.createElement("input");
+      repInput.type = "number";
+      repInput.value = seg.repetitions || 1;
+      repInput.dataset.seg = segIndex;
+      repInput.dataset.field = "repetitions";
+      repInput.style.width = "80px";
+      repInput.style.marginBottom = "10px";
+      segCard.appendChild(repInput);
     }
-  };
 
-  /* -----------------------------
-     BUTTON BAR
-  ------------------------------ */
-  const bar = modal.document.createElement("div");
-  bar.style.marginBottom = "20px";
+    /* ---------------------------------------------------------
+       STEPS
+    --------------------------------------------------------- */
 
-  function addButton(label, onclick) {
-    const btn = modal.document.createElement("button");
-    btn.textContent = label;
-    btn.style.marginRight = "10px";
-    btn.onclick = onclick;
-    bar.appendChild(btn);
-  }
+    const stepList = document.createElement("div");
+    stepList.style.marginTop = "10px";
 
-  // Tilføj segment
-  addButton("+ Tilføj segment", () => {
-    const segs = editor.get();
-    segs.push({
+    seg.steps = seg.steps || [];
+
+    seg.steps.forEach((step, stepIndex) => {
+      const stepRow = document.createElement("div");
+      stepRow.style.display = "flex";
+      stepRow.style.gap = "10px";
+      stepRow.style.marginBottom = "5px";
+
+      stepRow.innerHTML = `
+        <input type="number" value="${step.duration_min}" data-seg="${segIndex}" data-step="${stepIndex}" data-field="duration_min" style="width:80px;">
+        <input type="text" value="${step.note || ""}" data-seg="${segIndex}" data-step="${stepIndex}" data-field="note" style="flex:1;">
+        <button data-seg="${segIndex}" data-step="${stepIndex}" class="deleteStepBtn">🗑️</button>
+      `;
+
+      stepList.appendChild(stepRow);
+    });
+
+    segCard.appendChild(stepList);
+
+    // Tilføj step
+    const addStepBtn = document.createElement("button");
+    addStepBtn.textContent = "➕ Tilføj step";
+    addStepBtn.dataset.seg = segIndex;
+    addStepBtn.onclick = () => {
+      seg.steps.push({ duration_min: 1, note: "" });
+      renderEditor();
+    };
+    segCard.appendChild(addStepBtn);
+
+    // Slet segment
+    const deleteSegBtn = document.createElement("button");
+    deleteSegBtn.textContent = "🗑️ Slet segment";
+    deleteSegBtn.style.marginLeft = "10px";
+    deleteSegBtn.dataset.seg = segIndex;
+    deleteSegBtn.onclick = () => {
+      session.segments.splice(segIndex, 1);
+      renderEditor();
+    };
+    segCard.appendChild(deleteSegBtn);
+
+    container.appendChild(segCard);
+  });
+
+  /* ---------------------------------------------------------
+     TILFØJ NYT SEGMENT
+  --------------------------------------------------------- */
+
+  const addSegBtn = document.createElement("button");
+  addSegBtn.textContent = "➕ Tilføj nyt segment";
+  addSegBtn.onclick = () => {
+    session.segments.push({
       type: "interval_block",
       repetitions: 1,
       steps: []
     });
-    editor.set(segs);
-  });
-
-  // Tilføj step
-  addButton("+ Tilføj step", () => {
-    const segs = editor.get();
-    const block = segs.find(s => s.type === "interval_block");
-
-    if (!block) return alert("Ingen intervalblok fundet.");
-
-    block.steps = block.steps || [];
-    block.steps.push({ duration_min: 1, note: "Nyt step" });
-
-    editor.set(segs);
-  });
-
-  // Slet step
-  addButton("Slet sidste step", () => {
-    const segs = editor.get();
-    const block = segs.find(s => s.type === "interval_block");
-
-    if (!block || !block.steps || block.steps.length === 0)
-      return alert("Ingen steps at slette.");
-
-    block.steps.pop();
-    editor.set(segs);
-  });
-
-  // Presets
-  const presetTitle = modal.document.createElement("h3");
-  presetTitle.textContent = "Interval presets";
-  presetTitle.style.marginTop = "20px";
-  modal.document.body.appendChild(bar);
-  modal.document.body.appendChild(presetTitle);
-
-  const presetBar = modal.document.createElement("div");
-  presetBar.style.marginBottom = "20px";
-
-  Object.keys(PRESETS).forEach(name => {
-    addButton(name, () => {
-      const segs = editor.get();
-      segs.push(PRESETS[name]);
-      editor.set(segs);
-    });
-  });
-
-  modal.document.body.appendChild(presetBar);
-
-  // Gem
-  const saveBtn = modal.document.createElement("button");
-  saveBtn.textContent = "Gem segmenter";
-  saveBtn.style.background = "#0078d4";
-  saveBtn.style.color = "white";
-  saveBtn.style.padding = "10px 20px";
-  saveBtn.onclick = () => {
-    session.segments = editor.get();
-    modal.close();
     renderEditor();
   };
+  editorDiv.appendChild(addSegBtn);
 
-  modal.document.body.appendChild(saveBtn);
+  /* ---------------------------------------------------------
+     INPUT HANDLING
+  --------------------------------------------------------- */
+
+  editorDiv.querySelectorAll("input").forEach(input => {
+    input.onchange = () => {
+      const seg = session.segments[input.dataset.seg];
+
+      if (input.dataset.step !== undefined) {
+        const step = seg.steps[input.dataset.step];
+        step[input.dataset.field] = input.type === "number"
+          ? Number(input.value)
+          : input.value;
+      } else {
+        seg[input.dataset.field] = input.type === "number"
+          ? Number(input.value)
+          : input.value;
+      }
+
+      renderEditor();
+    };
+  });
+
+  editorDiv.querySelectorAll(".deleteStepBtn").forEach(btn => {
+    btn.onclick = () => {
+      const seg = session.segments[btn.dataset.seg];
+      seg.steps.splice(btn.dataset.step, 1);
+      renderEditor();
+    };
+  });
+
+  /* ---------------------------------------------------------
+     OPDATER JSON PREVIEW
+  --------------------------------------------------------- */
+
+  const previewDiv = document.getElementById("jsonPreview");
+  previewDiv.textContent = JSON.stringify(session, null, 2);
 }
