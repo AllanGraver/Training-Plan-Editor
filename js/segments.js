@@ -1,29 +1,31 @@
 function editSegments() {
   const session = plan.sessions.filter(s => s.week === selectedWeek)[selectedSessionIndex];
 
-  const container = document.createElement("div");
-  container.style.height = "400px";
-
+  // Åbn modal
   const modal = window.open("", "Segments", "width=750,height=900");
-  modal.document.write("<h2>Rediger segmenter</h2>");
+
+  // Ryd alt indhold
+  modal.document.body.innerHTML = "";
+
+  // Titel
+  const title = modal.document.createElement("h2");
+  title.textContent = "Rediger segmenter";
+  modal.document.body.appendChild(title);
+
+  // Container til JSONEditor
+  const container = modal.document.createElement("div");
+  container.style.height = "400px";
+  container.style.border = "1px solid #ccc";
+  container.style.marginBottom = "15px";
   modal.document.body.appendChild(container);
 
+  // JSONEditor
   const editor = new JSONEditor(container, { mode: "tree" });
   editor.set(session.segments);
 
   /* -----------------------------
-     PRESET HELPERS
+     PRESETS
   ------------------------------ */
-  function addPreset(preset) {
-    const segs = editor.get();
-    segs.push(preset);
-    editor.set(segs);
-  }
-
-  /* -----------------------------
-     PRESET DEFINITIONS
-  ------------------------------ */
-
   const PRESETS = {
     "30-20-10": {
       type: "interval_block",
@@ -34,7 +36,6 @@ function editSegments() {
         { duration_min: 0.166, note: "10 sek hurtigt" }
       ]
     },
-
     "Fartleg": {
       type: "interval_block",
       repetitions: 6,
@@ -43,7 +44,6 @@ function editSegments() {
         { duration_min: 1, note: "1 min roligt" }
       ]
     },
-
     "Pyramide": {
       type: "interval_block",
       repetitions: 1,
@@ -55,7 +55,6 @@ function editSegments() {
         { duration_min: 1, note: "1 min hårdt" }
       ]
     },
-
     "Progressivt løb": {
       type: "interval_block",
       repetitions: 1,
@@ -70,32 +69,19 @@ function editSegments() {
   /* -----------------------------
      BUTTON BAR
   ------------------------------ */
-
   const bar = modal.document.createElement("div");
-  bar.style.margin = "10px 0";
+  bar.style.marginBottom = "20px";
 
-  bar.innerHTML = `
-    <button id="addSegmentBtn">+ Tilføj segment</button>
-    <button id="addStepBtn">+ Tilføj step</button>
-    <button id="deleteStepBtn">Slet sidste step</button>
-    <br><br>
-    <strong>Interval presets:</strong><br>
-    <button class="presetBtn" data-type="30-20-10">30-20-10</button>
-    <button class="presetBtn" data-type="Fartleg">Fartleg</button>
-    <button class="presetBtn" data-type="Pyramide">Pyramideløb</button>
-    <button class="presetBtn" data-type="Progressivt løb">Progressivt løb</button>
-    <br><br>
-    <button id="saveSegmentsBtn" style="background:#0078d4;color:white;padding:10px 20px;">Gem segmenter</button>
-  `;
-
-  modal.document.body.appendChild(bar);
-
-  /* -----------------------------
-     BUTTON LOGIC
-  ------------------------------ */
+  function addButton(label, onclick) {
+    const btn = modal.document.createElement("button");
+    btn.textContent = label;
+    btn.style.marginRight = "10px";
+    btn.onclick = onclick;
+    bar.appendChild(btn);
+  }
 
   // Tilføj segment
-  modal.document.getElementById("addSegmentBtn").onclick = () => {
+  addButton("+ Tilføj segment", () => {
     const segs = editor.get();
     segs.push({
       type: "interval_block",
@@ -103,54 +89,64 @@ function editSegments() {
       steps: []
     });
     editor.set(segs);
-  };
+  });
 
   // Tilføj step
-  modal.document.getElementById("addStepBtn").onclick = () => {
+  addButton("+ Tilføj step", () => {
     const segs = editor.get();
     const block = segs.find(s => s.type === "interval_block");
 
-    if (!block) {
-      alert("Ingen intervalblok fundet. Tilføj først et segment.");
-      return;
-    }
+    if (!block) return alert("Ingen intervalblok fundet.");
 
-    if (!block.steps) block.steps = [];
-
-    block.steps.push({
-      duration_min: 1,
-      note: "Nyt step"
-    });
+    block.steps = block.steps || [];
+    block.steps.push({ duration_min: 1, note: "Nyt step" });
 
     editor.set(segs);
-  };
+  });
 
   // Slet step
-  modal.document.getElementById("deleteStepBtn").onclick = () => {
+  addButton("Slet sidste step", () => {
     const segs = editor.get();
     const block = segs.find(s => s.type === "interval_block");
 
-    if (!block || !block.steps || block.steps.length === 0) {
-      alert("Ingen steps at slette.");
-      return;
-    }
+    if (!block || !block.steps || block.steps.length === 0)
+      return alert("Ingen steps at slette.");
 
     block.steps.pop();
     editor.set(segs);
-  };
-
-  // Presets
-  modal.document.querySelectorAll(".presetBtn").forEach(btn => {
-    btn.onclick = () => {
-      const type = btn.dataset.type;
-      addPreset(PRESETS[type]);
-    };
   });
 
+  // Presets
+  const presetTitle = modal.document.createElement("h3");
+  presetTitle.textContent = "Interval presets";
+  presetTitle.style.marginTop = "20px";
+  modal.document.body.appendChild(bar);
+  modal.document.body.appendChild(presetTitle);
+
+  const presetBar = modal.document.createElement("div");
+  presetBar.style.marginBottom = "20px";
+
+  Object.keys(PRESETS).forEach(name => {
+    addButton(name, () => {
+      const segs = editor.get();
+      segs.push(PRESETS[name]);
+      editor.set(segs);
+    });
+  });
+
+  modal.document.body.appendChild(presetBar);
+
   // Gem
-  modal.document.getElementById("saveSegmentsBtn").onclick = () => {
+  const saveBtn = modal.document.createElement("button");
+  saveBtn.textContent = "Gem segmenter";
+  saveBtn.style.background = "#0078d4";
+  saveBtn.style.color = "white";
+  saveBtn.style.padding = "10px 20px";
+  saveBtn.onclick = () => {
     session.segments = editor.get();
     modal.close();
     renderEditor();
   };
+
+  modal.document.body.appendChild(saveBtn);
 }
