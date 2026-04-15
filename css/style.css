@@ -1,10 +1,75 @@
 body {
   margin: 0;
   font-family: "Segoe UI", Arial, sans-serif;
+
+  /* CHANGED: body becomes a column so header sits on top */
   display: flex;
+  flex-direction: column;
+
   height: 100vh;
   background: #f7f7f7;
   overflow: hidden;
+}
+
+/* NEW: shell keeps your original 3-panels layout in a row */
+.app-shell {
+  display: flex;
+  flex: 1;
+  min-height: 0; /* important so inner panels can scroll */
+  overflow: hidden;
+}
+
+/* =====================================================
+   TOP MENU – layout only (colors inherited)
+   ===================================================== */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+
+  /* keep header from shrinking */
+  flex: 0 0 auto;
+}
+
+/* Menu sections */
+.menu-left,
+.menu-center,
+.menu-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.app-title {
+  font-weight: 700;
+  font-size: 1rem;
+  white-space: nowrap;
+}
+
+/* IMPORTANT:
+   Your global button style makes all buttons 100% width and orange.
+   For menu we only override layout/size so it behaves like a menu.
+   (No new colors defined here.) */
+.app-header button,
+.menu-item {
+  width: auto;
+  margin-top: 0;
+  padding: 6px 10px;
+  border-radius: 6px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* Optional: hide center nav on small screens */
+@media (max-width: 640px) {
+  .menu-center {
+    display: none;
+  }
+  .app-header {
+    flex-wrap: wrap;
+  }
 }
 
 /* Sidebar */
@@ -60,6 +125,7 @@ button:hover {
   flex: 1;
   padding: 15px;
   overflow-y: auto;
+  min-width: 0; /* good practice for flex children */
 }
 
 .week-card {
@@ -127,3 +193,4 @@ input, select, textarea {
   font-family: monospace;
   font-size: 12px;
 }
+``
