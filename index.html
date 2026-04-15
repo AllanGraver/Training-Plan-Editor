@@ -14,41 +14,24 @@
 
 <body>
 
+  <!-- =====================================================
+       HEADER – Strava orange + toggle til højre
+       ===================================================== -->
   <header class="app-header" role="banner">
-    <div class="menu-left">
-      <span class="app-title">Træningsplan Editor</span>
-      <button id="themeToggle" class="theme-toggle">Light mode</button>
-    </div>
-
-    <nav class="menu-center" aria-label="Primær navigation">
-      <button class="menu-item" type="button"
-        onclick="document.getElementById('sidebar')?.focus()">
-        Planer
-      </button>
-
-      <button class="menu-item" type="button"
-        onclick="document.getElementById('main')?.focus()">
-        Oversigt
-      </button>
-
-      <button class="menu-item" type="button"
-        onclick="document.getElementById('editorPanel')?.focus()">
-        Rediger pas
-      </button>
-    </nav>
-
-    <div class="menu-right" aria-label="Hurtig handlinger">
-      <button class="menu-item" type="button" onclick="newPlan()">+ Ny</button>
-      <button class="menu-item" type="button" onclick="savePlan()">Gem</button>
-      <button class="menu-item" type="button" onclick="savePlanAs()">Gem som</button>
-      <button class="menu-item" type="button" onclick="exportPlan()">Eksportér</button>
-      <button class="menu-item" type="button" onclick="importPlan()">Importér</button>
-    </div>
+    <span class="app-title">Træningsplan Editor</span>
+    <button id="themeToggle" class="theme-toggle">Light mode</button>
   </header>
 
+  <!-- =====================================================
+       APP SHELL
+       ===================================================== -->
   <div class="app-shell">
 
+    <!-- =====================================================
+         SIDEBAR – Planer + Uger + Handlinger
+         ===================================================== -->
     <div id="sidebar" tabindex="-1">
+
       <h2>Planer</h2>
 
       <button onclick="newPlan()">+ Ny plan</button>
@@ -64,11 +47,18 @@
 
       <h2>Uger</h2>
       <div id="weekList"></div>
+
       <button onclick="addSession()">+ Tilføj pas</button>
     </div>
 
+    <!-- =====================================================
+         MAIN – Oversigt over ugens pas
+         ===================================================== -->
     <div id="main" tabindex="-1"></div>
 
+    <!-- =====================================================
+         EDITOR PANEL – Rediger valgt pas
+         ===================================================== -->
     <div id="editorPanel" tabindex="-1">
       <h2>Rediger pas</h2>
       <div id="sessionEditor">Vælg et pas…</div>
@@ -79,12 +69,14 @@
 
   </div>
 
-  <!-- Versioneret for at undgå cache -->
-  <script src="js/library.js?v=2"></script>
-  <script src="js/segments.js?v=2"></script>
-  <script src="js/autocalc.js?v=2"></script>
-  <script src="js/ui.js?v=2"></script>
-  <script src="js/app.js?v=2"></script>
+  <!-- =====================================================
+       SCRIPTS (versioneret for at undgå cache)
+       ===================================================== -->
+  <script src="js/library.js?v=3"></script>
+  <script src="js/segments.js?v=3"></script>
+  <script src="js/autocalc.js?v=3"></script>
+  <script src="js/ui.js?v=3"></script>
+  <script src="js/app.js?v=3"></script>
 
 </body>
 </html>
