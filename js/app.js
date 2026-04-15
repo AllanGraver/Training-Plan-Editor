@@ -62,11 +62,13 @@ function renderLibrary() {
   container.innerHTML = "";
 
   Object.keys(lib).forEach(name => {
+    const row = document.createElement("div");
+    row.className = "plan-item-row";
+
     const item = document.createElement("div");
     item.className = "plan-item";
     item.textContent = name;
 
-    // ⭐ Markér valgt plan
     if (name === plan.plan_name) {
       item.classList.add("selected");
     }
@@ -74,7 +76,6 @@ function renderLibrary() {
     item.onclick = () => {
       plan = JSON.parse(JSON.stringify(lib[name]));
 
-      // ⭐ Sikr at alle sessions har steps-array
       plan.sessions.forEach(s => {
         if (!Array.isArray(s.steps)) s.steps = [];
       });
@@ -87,42 +88,47 @@ function renderLibrary() {
       renderEditor();
     };
 
-    container.appendChild(item);
-  });
-}
+    // ⭐ Skraldespands-ikon
+    const del = document.createElement("span");
+    del.className = "delete-plan";
+    del.innerHTML = `
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2" stroke-linecap="round"
+           stroke-linejoin="round">
+        <polyline points="3 6 5 6 21 6"></polyline>
+        <path d="M19 6l-1 14H6L5 6"></path>
+        <path d="M10 11v6"></path>
+        <path d="M14 11v6"></path>
+        <path d="M9 6V4h6v2"></path>
+      </svg>
+    `;
 
-/* =========================================================
-   UGE-LISTE
-   ========================================================= */
+    del.onclick = (e) => {
+      e.stopPropagation(); // klik må ikke åbne planen
 
-function renderWeeks() {
-  const weekList = document.getElementById("weekList");
-  if (!weekList) return;
+      if (confirm(`Slet planen "${name}"?`)) {
+        delete lib[name];
+        saveLibrary(lib);
 
-  weekList.innerHTML = "";
+        // Hvis den slettede plan var valgt → ryd visning
+        if (plan.plan_name === name) {
+          plan = { plan_name: "Ny plan", duration_weeks: 12, sessions: [] };
+          selectedWeek = 1;
+          selectedSessionIndex = null;
+          renderWeeks();
+          renderMain();
+          renderEditor();
+        }
 
-  for (let w = 1; w <= (plan.duration_weeks || 12); w++) {
-    const btn = document.createElement("button");
-    btn.textContent = `Uge ${w}`;
-
-    // ⭐ Sort kant på valgt uge
-    btn.className = (w === selectedWeek)
-      ? "week-button active"
-      : "week-button";
-
-    btn.onclick = () => {
-      selectedWeek = w;
-      selectedSessionIndex = null;
-      renderMain();
-      renderEditor();
+        renderLibrary();
+      }
     };
 
-    weekList.appendChild(btn);
-  }
-
-  renderSessionsForWeek();
+    row.appendChild(item);
+    row.appendChild(del);
+    container.appendChild(row);
+  });
 }
-
 /* =========================================================
    SESSION-HÅNDTERING
    ========================================================= */
