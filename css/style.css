@@ -468,3 +468,71 @@ body.light-mode .theme-toggle {
 body.light-mode .theme-toggle:hover {
   background: #d84302;
 }
+/* =====================================================
+   LIGHT MODE OVERRIDES
+   ===================================================== */
+
+body.light-mode {
+  background: #f2f2f2;
+  color: #000;
+}
+
+body.light-mode #sidebar,
+body.light-mode #editorPanel,
+body.light-mode #main {
+  background: #ffffff;
+  color: #000;
+}
+
+body.light-mode .panel-header {
+  background: #ffffff;
+  color: #000;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+}
+
+body.light-mode .plan-item {
+  background: #fafafa;
+  border-color: #ddd;
+  color: #000;
+}
+
+body.light-mode .plan-item.selected {
+  background: #ffe9dd;
+  border: 2px solid #000 !important;
+}
+
+body.light-mode .week-button {
+  background: #fafafa;
+  border-color: #ddd;
+  color: #000;
+}
+
+body.light-mode .week-button.active {
+  background: #fc4c02;
+  color: #fff;
+  border: 2px solid #000 !important;
+}
+
+body.light-mode .step-card {
+  background: #ffffff;
+  color: #000;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+body.light-mode input,
+body.light-mode select,
+body.light-mode textarea {
+  background: #fff;
+  color: #000;
+  border: 1px solid #bbb;
+}
+
+body.light-mode .segment-card {
+  background: #fafafa;
+  border-color: #ddd;
+  color: #000;
+}
+
+body.light-mode .toggle-track {
+  background: #333;
+}
