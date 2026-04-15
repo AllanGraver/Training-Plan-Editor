@@ -1,47 +1,48 @@
-"use strict"; if (typeof window.selectedWeek !== "number") window.selectedWeek = 1;
-  if (selectedWeek < 1) selectedWeek = 1;
-  if (selectedWeek > plan.duration_weeks) selectedWeek = plan.duration_weeks;
 
-  if (window.selectedSessionIndex !== null && typeof window.selectedSessionIndex !== "number") {
-    window.selectedSessionIndex = null;
+"use strict";
+
+/* =========================================================
+   UI STATE
+========================================================= */
+let editorMode = "overview"; // "overview" | "step"
+let activeStepIndex = null;
+
+/* =========================================================
+   HELPERS
+========================================================= */
+function ensureSessionSteps(session) {
+  if (!Array.isArray(session.steps) || session.steps.length === 0) {
+    session.steps = [
+      {
+        id: "warmup",
+        type: "Opvarmning",
+        duration: { type: "lap", value: null },
+        intensity: { type: "none", value: null },
+        note: ""
+      },
+      {
+        id: "run",
+        type: "Løb",
+        duration: { type: "distance", value: 0.01 },
+        intensity: { type: "tempo", value: "5:30–6:00 /km" },
+        note: ""
+      },
+      {
+        id: "cooldown",
+        type: "Nedkøling",
+        duration: { type: "lap", value: null },
+        intensity: { type: "none", value: null },
+        note: ""
+      }
+    ];
   }
 }
 
-function getWeekSessions() {
-  return plan.sessions.filter(s => s.week === selectedWeek);
+function getCurrentSession() {
+  if (selectedSessionIndex == null) return null;
+  return plan.sessions.filter(s => s.week === selectedWeek)[selectedSessionIndex] || null;
 }
 
-function getSelectedSession() {
-  if (selectedSessionIndex === null) return null;
-  const sessions = getWeekSessions();
-  return sessions[selectedSessionIndex] || null;
-}
-
-function parseFirstNumber(str) {
-  if (!str) return null;
-  const s = String(str).trim().replace(",", ".");
-  const m = s.match(/(\d+(\.\d+)?)/);
-  return m ? Number(m[1]) : null;
-}
-
-function clampDay(n) {
-  const x = Number(n);
-  if (!Number.isFinite(x)) return 1;
-  return Math.min(7, Math.max(1, x));
-}
-
-function dayNameFromNumber(n) {
-  const map = {
-    1: "Mandag",
-    2: "Tirsdag",
-    3: "Onsdag",
-    4: "Torsdag",
-    5: "Fredag",
-    6: "Lørdag",
-    7: "Søndag"
-  };
-  return map[Number(n)] || "Mandag";
-}
 
 /* ---------------------------------------------------------
    JSON PREVIEW TOGGLE (Avanceret)
