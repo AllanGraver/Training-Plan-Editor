@@ -1,5 +1,5 @@
 /* =====================================================
-   GLOBAL LAYOUT
+   GLOBAL LAYOUT — LIGHT MODE (DEFAULT)
    ===================================================== */
 
 body {
@@ -37,12 +37,6 @@ body {
   box-shadow: 0 2px 4px rgba(0,0,0,0.25);
 }
 
-/* Fjern ALLE andre knapper i toppen */
-.app-header button:not(.theme-toggle),
-.app-header .menu-item {
-  display: none !important;
-}
-
 .app-title {
   font-size: 20px;
   font-weight: 700;
@@ -70,31 +64,6 @@ body {
   background: #ffffff44;
 }
 
-/* Light mode styling */
-body.light-mode .theme-toggle {
-  background: #fc4c02;
-  color: #fff;
-  border-color: #fc4c02;
-}
-
-body.light-mode .theme-toggle:hover {
-  background: #d84302;
-}
-
-/* =====================================================
-   PANEL HEADERS (venstre, midt, højre)
-   ===================================================== */
-
-.panel-header {
-  font-size: 16px;
-  font-weight: 700;
-  padding: 10px 12px;
-  border-left: 4px solid #fc4c02;
-  background: #ffffff;
-  margin-bottom: 14px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.08);
-}
-
 /* =====================================================
    SIDEBAR (venstre panel)
    ===================================================== */
@@ -109,12 +78,10 @@ body.light-mode .theme-toggle:hover {
   box-shadow: 0 0 6px rgba(0,0,0,0.05);
 }
 
-/* Kompakt planliste */
 .plan-item {
   padding: 6px 8px;
   margin-bottom: 4px;
   font-size: 14px;
-  line-height: 1.2;
   background: #fafafa;
   border: 1px solid #ddd;
   border-radius: 6px;
@@ -128,13 +95,11 @@ body.light-mode .theme-toggle:hover {
   border-color: #fc4c02;
 }
 
-/* Valgt plan */
 .plan-item.selected {
   border: 2px solid black !important;
   background: #ffe9dd;
 }
 
-/* Sidebar-knapper kompakte */
 #sidebar button {
   padding: 6px 8px;
   font-size: 14px;
@@ -173,7 +138,6 @@ body.light-mode .theme-toggle:hover {
   border-color: #fc4c02;
 }
 
-/* Valgt uge */
 .week-button.active {
   background: #fc4c02;
   color: white;
@@ -192,7 +156,6 @@ body.light-mode .theme-toggle:hover {
   background: #f7f7f7;
 }
 
-/* Step cards (Garmin-style) */
 .step-card {
   background: white;
   padding: 12px;
@@ -245,7 +208,6 @@ label {
   font-weight: bold;
 }
 
-/* Tydeligere inputfelter */
 input, select, textarea {
   width: 100%;
   padding: 8px;
@@ -295,88 +257,70 @@ textarea:focus {
   color: #fc4c02;
 }
 
-.segment-card button {
-  width: auto;
-  margin-top: 10px;
-  margin-right: 6px;
-  padding: 6px 10px;
-}
-
 /* =====================================================
-   DURATION ROW
+   DARK MODE OVERRIDES
    ===================================================== */
 
-.duration-row {
-  display: flex;
-  gap: 10px;
-  align-items: center;
+body.dark-mode {
+  background: #000;
+  color: #fff;
 }
 
-.duration-row input {
-  width: 60px;
+body.dark-mode #sidebar,
+body.dark-mode #editorPanel,
+body.dark-mode #main {
+  background: #111;
+  color: #fff;
 }
 
-/* =====================================================
-   LIGHT MODE OVERRIDES
-   ===================================================== */
-
-body.light-mode {
-  background: #f2f2f2;
-  color: #000;
+body.dark-mode .panel-header {
+  background: #1a1a1a;
+  color: #fff;
+  border-left: 4px solid #fc4c02;
 }
 
-body.light-mode #sidebar,
-body.light-mode #editorPanel,
-body.light-mode #main {
-  background: #ffffff;
-  color: #000;
+body.dark-mode .plan-item {
+  background: #1a1a1a;
+  border-color: #333;
+  color: #fff;
 }
 
-body.light-mode .panel-header {
-  background: #ffffff;
-  color: #000;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.08);
-}
-
-body.light-mode .plan-item {
-  background: #fafafa;
-  border-color: #ddd;
-  color: #000;
-}
-
-body.light-mode .plan-item.selected {
-  background: #ffe9dd;
-  border: 2px solid #000 !important;
-}
-
-body.light-mode .week-button {
-  background: #fafafa;
-  border-color: #ddd;
-  color: #000;
-}
-
-body.light-mode .week-button.active {
+body.dark-mode .plan-item:hover {
   background: #fc4c02;
   color: #fff;
-  border: 2px solid #000 !important;
 }
 
-body.light-mode .step-card {
-  background: #ffffff;
-  color: #000;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+body.dark-mode .plan-item.selected {
+  background: #2a2a2a;
+  border: 2px solid #fff !important;
 }
 
-body.light-mode input,
-body.light-mode select,
-body.light-mode textarea {
-  background: #fff;
-  color: #000;
-  border: 1px solid #bbb;
+body.dark-mode .week-button {
+  background: #1a1a1a;
+  border-color: #333;
+  color: #fff;
 }
 
-body.light-mode .segment-card {
-  background: #fafafa;
-  border-color: #ddd;
-  color: #000;
+body.dark-mode .week-button.active {
+  background: #fc4c02;
+  border: 2px solid #fff !important;
+}
+
+body.dark-mode .step-card {
+  background: #1a1a1a;
+  color: #fff;
+}
+
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea {
+  background: #222;
+  color: #fff;
+  border: 1px solid #555;
+}
+
+body.dark-mode .segment-card {
+  background: #1a1a1a;
+  border-color: #333;
+  color: #fff;
 }
