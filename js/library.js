@@ -26,6 +26,12 @@ function renderLibrary() {
     const item = document.createElement("div");
     item.className = "plan-item";
     item.textContent = name;
+
+    // ⭐ Markér valgt plan
+    if (plan && plan.plan_name === name) {
+      item.classList.add("selected");
+    }
+
     item.onclick = () => loadPlan(name);
     div.appendChild(item);
   });
@@ -66,6 +72,8 @@ function savePlan() {
   const name = plan.plan_name || prompt("Navn på planen:");
   if (!name) return;
 
+  plan.plan_name = name;
+
   const lib = loadLibrary();
   lib[name] = plan;
   saveLibrary(lib);
@@ -73,12 +81,14 @@ function savePlan() {
 }
 
 /* =========================================================
-   GEM SOM NY PLAN
+   GEM SOM (tidl. GEM SOM NY)
    ========================================================= */
 
 function savePlanAs() {
   const name = prompt("Navn på ny plan:");
   if (!name) return;
+
+  plan.plan_name = name;
 
   const lib = loadLibrary();
   lib[name] = plan;
@@ -93,6 +103,11 @@ function savePlanAs() {
 function loadPlan(name) {
   const lib = loadLibrary();
   plan = JSON.parse(JSON.stringify(lib[name]));
+
+  // Sikr at sessions har steps-array
+  plan.sessions.forEach(s => {
+    if (!Array.isArray(s.steps)) s.steps = [];
+  });
 
   selectedWeek = 1;
   selectedSessionIndex = null;
@@ -127,8 +142,23 @@ function importPlan() {
     const reader = new FileReader();
 
     reader.onload = () => {
-      plan = JSON.parse(reader.result);
-      savePlan();
+      const imported = JSON.parse(reader.result);
+
+      // ⭐ Brug filnavnet som planens navn
+      const fileName = file.name.replace(/\.json$/i, "");
+      imported.plan_name = fileName;
+
+      // Sikr steps-array
+      imported.sessions.forEach(s => {
+        if (!Array.isArray(s.steps)) s.steps = [];
+      });
+
+      plan = imported;
+
+      const lib = loadLibrary();
+      lib[fileName] = plan;
+      saveLibrary(lib);
+
       renderLibrary();
       renderMain();
       renderEditor();
