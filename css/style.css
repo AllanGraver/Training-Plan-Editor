@@ -1,8 +1,11 @@
+/* =====================================================
+   GLOBAL LAYOUT
+   ===================================================== */
+
 body {
   margin: 0;
   font-family: "Segoe UI", Arial, sans-serif;
 
-  /* body as column so header sits on top */
   display: flex;
   flex-direction: column;
 
@@ -11,29 +14,26 @@ body {
   overflow: hidden;
 }
 
-/* Shell keeps your original 3-panels layout in a row */
 .app-shell {
   display: flex;
   flex: 1;
-  min-height: 0; /* important so inner panels can scroll */
+  min-height: 0;
   overflow: hidden;
 }
 
 /* =====================================================
-   TOP MENU – layout only (colors inherited)
+   TOP MENU
    ===================================================== */
+
 .app-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
   padding: 10px 14px;
-
-  /* keep header from shrinking */
   flex: 0 0 auto;
 }
 
-/* Menu sections */
 .menu-left,
 .menu-center,
 .menu-right {
@@ -48,13 +48,6 @@ body {
   white-space: nowrap;
 }
 
-/* IMPORTANT:
-   Your global button style makes all buttons 100% width and orange.
-   For menu we only override layout/size so it behaves like a menu.
-   (No new colors defined here.)
-   
-   Improvement: scope .menu-item to header, so it doesn't affect other future uses.
-*/
 .app-header button {
   width: auto;
   margin-top: 0;
@@ -73,7 +66,6 @@ body {
   white-space: nowrap;
 }
 
-/* Optional: hide center nav on small screens */
 @media (max-width: 640px) {
   .menu-center {
     display: none;
@@ -83,10 +75,13 @@ body {
   }
 }
 
-/* Sidebar */
+/* =====================================================
+   SIDEBAR
+   ===================================================== */
+
 #sidebar {
   width: 260px;
-  flex: 0 0 260px;   /* improvement: prevents squeezing */
+  flex: 0 0 260px;
   background: #ffffff;
   border-right: 1px solid #ddd;
   padding: 15px;
@@ -132,53 +127,84 @@ button:hover {
   background: #d84302;
 }
 
-/* Main */
+/* =====================================================
+   MAIN (MIDTERSEKTION)
+   ===================================================== */
+
 #main {
   flex: 1 1 auto;
   padding: 15px;
   overflow-y: auto;
-  min-width: 0; /* good practice for flex children */
+  min-width: 0;
 }
 
-.week-card {
+.step-card {
   background: white;
-  padding: 15px;
-  margin-bottom: 15px;
+  padding: 12px;
+  margin-bottom: 12px;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.session-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px 0;
-  border-bottom: 1px solid #eee;
-}
-
-.session-title {
-  font-weight: bold;
-}
-
-.session-meta {
-  color: #555;
-}
-
-.edit-btn {
-  background: #0078d4;
-  padding: 6px 10px;
-  border-radius: 4px;
-  color: white;
   cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  transition: 0.2s;
 }
 
-/* Editor panel */
+.step-card:hover {
+  background: #fff5ef;
+}
+
+.step-title {
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.step-sub {
+  color: #555;
+  font-size: 14px;
+}
+
+/* =====================================================
+   WEEK BUTTONS
+   ===================================================== */
+
+.week-button {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 6px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  background: #fafafa;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.week-button:hover {
+  background: #fc4c02;
+  color: white;
+  border-color: #fc4c02;
+}
+
+.week-button.active {
+  background: #fc4c02;
+  color: white;
+  border-color: #fc4c02;
+}
+
+/* =====================================================
+   EDITOR PANEL (HØJRE SIDE)
+   ===================================================== */
+
 #editorPanel {
   width: 380px;
-  flex: 0 0 380px;   /* improvement: prevents squeezing */
+  flex: 0 0 380px;
   background: #ffffff;
   border-left: 1px solid #ddd;
   padding: 15px;
   overflow-y: auto;
+}
+
+#editorPanel h3 {
+  margin-top: 20px;
+  color: #fc4c02;
 }
 
 label {
@@ -195,6 +221,10 @@ input, select, textarea {
   border: 1px solid #ccc;
 }
 
+/* =====================================================
+   JSON PREVIEW
+   ===================================================== */
+
 #jsonPreview {
   background: #1e1e1e;
   color: #dcdcdc;
@@ -207,9 +237,90 @@ input, select, textarea {
   font-size: 12px;
 }
 
-.session-row.is-active {
-  background: #fff5ef;            /* meget lys orange-tint (matcher tema) */
-  border-left: 4px solid #fc4c02; /* din Strava orange */
-  padding-left: 10px;
+/* =====================================================
+   SEGMENT EDITOR
+   ===================================================== */
+
+.segment-card {
+  background: #fafafa;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 12px;
 }
 
+.segment-card strong {
+  color: #fc4c02;
+}
+
+.segment-card button {
+  width: auto;
+  margin-top: 10px;
+  margin-right: 6px;
+  padding: 6px 10px;
+}
+
+/* =====================================================
+   DURATION ROW
+   ===================================================== */
+
+.duration-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.duration-row input {
+  width: 60px;
+}
+
+/* =====================================================
+   iOS-STYLE TOGGLE SWITCH (STRAVA-ORANGE)
+   ===================================================== */
+
+.toggle-container {
+  margin-top: 15px;
+}
+
+.toggle-track {
+  width: 100%;
+  height: 32px;
+  background: #333;
+  border-radius: 20px;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.toggle-thumb {
+  width: 28px;
+  height: 28px;
+  background: #fc4c02;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  transition: left 0.25s ease;
+}
+
+.toggle-thumb.left {
+  left: 2px;
+}
+
+.toggle-thumb.right {
+  left: calc(100% - 30px);
+}
+
+.toggle-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.toggle-labels span {
+  color: #777;
+}
+
+.toggle-labels .active {
+  color: #fc4c02;
+}
