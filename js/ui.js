@@ -1,44 +1,13 @@
-"use strict";
+"use strict"; if (typeof window.selectedWeek !== "number") window.selectedWeek = 1;
+  if (selectedWeek < 1) selectedWeek = 1;
+  if (selectedWeek > plan.duration_weeks) selectedWeek = plan.duration_weeks;
 
-/* =========================================================
-   UI.JS – Træningsplan Editor UI
-   ---------------------------------------------------------
-   Denne fil forventer at app.js definerer:
-     - let plan = { duration_weeks, sessions: [...] }
-     - let selectedWeek = 1;
-     - let selectedSessionIndex = null;
-
-   VIGTIGT:
-   selectedSessionIndex = index i sessions for valgt uge (FILTERED index)
-   (så autoCalc() / editSegments() fortsat virker som før)
-   ========================================================= */
-
-/* ---------------------------------------------------------
-   SAFE HELPERS
---------------------------------------------------------- */
-function ensurePlan() {
-  if (typeof window.plan !== "object" || window.plan === null) {
-    window.plan = {
-      plan_name: "Ny træningsplan",
-      duration_weeks: 12,
-      race_distance_km: null,
-      sessions: []
-    };
-  }
-  if (!Array.isArray(plan.sessions)) plan.sessions = [];
-  if (!plan.duration_weeks) plan.duration_weeks = 12;
-
-  if (typeof window.selectedWeek !== "number") window.selectedWeek = 1;
-  if (window.selectedWeek < 1) window.selectedWeek = 1;
-  if (window.selectedWeek > plan.duration_weeks) window.selectedWeek = plan.duration_weeks;
-
-  if (typeof window.selectedSessionIndex !== "number" && window.selectedSessionIndex !== null) {
+  if (window.selectedSessionIndex !== null && typeof window.selectedSessionIndex !== "number") {
     window.selectedSessionIndex = null;
   }
 }
 
 function getWeekSessions() {
-  // sessions for current week (filtered)
   return plan.sessions.filter(s => s.week === selectedWeek);
 }
 
@@ -55,6 +24,12 @@ function parseFirstNumber(str) {
   return m ? Number(m[1]) : null;
 }
 
+function clampDay(n) {
+  const x = Number(n);
+  if (!Number.isFinite(x)) return 1;
+  return Math.min(7, Math.max(1, x));
+}
+
 function dayNameFromNumber(n) {
   const map = {
     1: "Mandag",
@@ -65,19 +40,13 @@ function dayNameFromNumber(n) {
     6: "Lørdag",
     7: "Søndag"
   };
-  return map[n] || "Mandag";
-}
-
-function clampDay(n) {
-  const x = Number(n);
-  if (!Number.isFinite(x)) return 1;
-  return Math.min(7, Math.max(1, x));
+  return map[Number(n)] || "Mandag";
 }
 
 /* ---------------------------------------------------------
-   JSON PREVIEW TOGGLE (Advanced)
+   JSON PREVIEW TOGGLE (Avanceret)
 --------------------------------------------------------- */
-let showJsonPreview = true; // default: som nu (synlig). Sæt til false hvis du vil skjule som standard.
+let showJsonPreview = false; // skjult som default (Avanceret)
 
 function setJsonVisible(visible) {
   showJsonPreview = !!visible;
@@ -87,11 +56,56 @@ function setJsonVisible(visible) {
 
   json.style.display = showJsonPreview ? "block" : "none";
 
-  // skjul/vis evt. "JSON" overskrift (h3) hvis den står lige før jsonPreview
+  // skjul/vis "JSON" overskrift hvis den står lige før jsonPreview
   const prev = json.previousElementSibling;
   if (prev && prev.tagName === "H3" && prev.textContent.trim().toLowerCase() === "json") {
     prev.style.display = showJsonPreview ? "block" : "none";
   }
+}
+
+function updateJsonPreview(session) {
+  const previewDiv = document.getElementById("jsonPreview");
+  if (!previewDiv) return;
+  previewDiv.textContent = session ? JSON.stringify(session, null, 2) : "";
+}
+
+/* ---------------------------------------------------------
+   MIDTERPANELET – live oversigt helpers
+--------------------------------------------------------- */
+function updateMainActiveSummary(session) {
+  const el = document.getElementById("mainActiveSummary");
+  if (!el) return;
+
+  const txt = session
+    ? `Redigerer: ${session.title ?? "Nyt pas"} (${dayNameFromNumber(session.day)})`
+    : "Vælg et pas for at redigere";
+
+  el.textContent = txt;
+}
+
+function updateMainRow(idx, session) {
+  // Opdater kun den specifikke række (ingen scroll-hop)
+  const titleEl = document.getElementById(`title-${idx}`);
+  const metaEl = document.getElementById(`meta-${idx}`);
+  const rowEl = document.getElementById(`sessionRow-${idx}`);
+
+  if (titleEl) titleEl.textContent = session.title ?? "Nyt pas";
+
+  if (metaEl) {
+    const dayTxt = dayNameFromNumber(session.day);
+    const km = (session.distance_km ?? "-");
+    const min = (session.duration_min ?? "-");
+    metaEl.textContent = `${dayTxt} • ${km} km • ${min} min`;
+  }
+
+  // Marker aktiv
+  if (rowEl) {
+    document.querySelectorAll(".session-row.is-active")
+      .forEach(el => el.classList.remove("is-active"));
+    rowEl.classList.add("is-active");
+  }
+
+  updateMainActiveSummary(session);
 }
 
 /* =========================================================
@@ -123,6 +137,7 @@ function renderWeeks() {
 
 /* =========================================================
    RENDER MIDTERPANELET (ugevisning + pas)
+   - fungerer som live oversigt
 --------------------------------------------------------- */
 function renderMain() {
   ensurePlan();
@@ -135,9 +150,19 @@ function renderMain() {
   const weekCard = document.createElement("div");
   weekCard.className = "week-card";
 
-  weekCard.innerHTML = `<h2>Uge ${selectedWeek}</h2>`;
-
   const sessions = getWeekSessions();
+  const activeSession = (selectedSessionIndex !== null) ? sessions[selectedSessionIndex] : null;
+
+  const activeText = activeSession
+    ? `Redigerer: ${activeSession.title ?? "Nyt pas"} (${dayNameFromNumber(activeSession.day)})`
+    : "Vælg et pas for at redigere";
+
+  weekCard.innerHTML = `
+    <h2>Uge ${selectedWeek}</h2>
+    <div id="mainActiveSummary" style="margin:6px 0 12px;color:#555;font-size:13px;">
+      ${activeText}
+    </div>
+  `;
 
   /* Hvis ingen pas i ugen */
   if (sessions.length === 0) {
@@ -148,18 +173,27 @@ function renderMain() {
     weekCard.appendChild(empty);
   }
 
-  /* ---------------------------------------------------------
-     VIS PAS I UGEN
-  --------------------------------------------------------- */
+  /* VIS PAS I UGEN */
   sessions.forEach((s, i) => {
     const row = document.createElement("div");
     row.className = "session-row";
+    row.id = `sessionRow-${i}`;
+    row.dataset.idx = String(i);
+
+    if (i === selectedSessionIndex) {
+      row.classList.add("is-active");
+    }
+
+    const title = s.title ?? "Nyt pas";
+    const dayTxt = dayNameFromNumber(s.day);
+    const km = (s.distance_km ?? "-");
+    const min = (s.duration_min ?? "-");
 
     row.innerHTML = `
       <div>
-        <div class="session-title">${s.title ?? "Nyt pas"}</div>
-        <div class="session-meta">
-          ${s.distance_km ?? "-"} km • ${s.duration_min ?? "-"} min
+        <div class="session-title" id="title-${i}">${title}</div>
+        <div class="session-meta" id="meta-${i}">
+          ${dayTxt} • ${km} km • ${min} min
         </div>
       </div>
 
@@ -173,22 +207,18 @@ function renderMain() {
     weekCard.appendChild(row);
   });
 
-  /* ---------------------------------------------------------
-     TILFØJ PAS
-  --------------------------------------------------------- */
+  /* TILFØJ PAS */
   const addBtn = document.createElement("button");
   addBtn.textContent = "+ Tilføj pas";
   addBtn.style.marginTop = "15px";
   addBtn.onclick = addSession;
 
   weekCard.appendChild(addBtn);
-
   main.appendChild(weekCard);
 }
 
 /* =========================================================
-   SLET PAS
-   (beholder din logik – men lidt mere robust)
+   SLET PAS (filtered index -> global index mapping)
 --------------------------------------------------------- */
 function deleteSession(index) {
   ensurePlan();
@@ -197,13 +227,11 @@ function deleteSession(index) {
 
   const sessions = getWeekSessions();
   const globalIndex = plan.sessions.indexOf(sessions[index]);
-
   if (globalIndex === -1) return;
 
   plan.sessions.splice(globalIndex, 1);
 
-  // Justér selectedSessionIndex på en fornuftig måde:
-  // Hvis man sletter et pas før det valgte index, så rykker index 1 ned.
+  // Justér selectedSessionIndex (filtered) robust
   if (selectedSessionIndex !== null) {
     if (index === selectedSessionIndex) {
       selectedSessionIndex = null;
@@ -217,58 +245,87 @@ function deleteSession(index) {
 }
 
 /* =========================================================
-   REDIGER PAS (beholder din semantik: filtered index)
+   REDIGER PAS (filtered index)
 --------------------------------------------------------- */
 function editSession(index) {
   selectedSessionIndex = index;
+  renderMain();   // så highlight/oversigt opdateres
+  renderEditor();
+}
+
+/* =========================================================
+   TILFØJ NYT PAS (filtered index)
+--------------------------------------------------------- */
+function addSession() {
+  ensurePlan();
+
+  plan.sessions.push({
+    week: selectedWeek,
+    day: 1,
+    title: "Nyt pas",
+    distance_km: null,
+    duration_min: null,
+    note: "",
+    segments: []
+  });
+
+  // vælg det nyeste pas i ugen (filtered index)
+  const sessions = getWeekSessions();
+  selectedSessionIndex = sessions.length - 1;
+
+  renderMain();
   renderEditor();
 }
 
 /* =========================================================
    RENDER EDITOR (højre panel)
-   - Tilføjer Varighedstype (Tid/Distance)
-   - Ét input "Varighed" gemmer til distance_km eller duration_min
+   - Live sync til midterpanelet (oversigt)
+   - Varighedstype: Tid/Distance (kun disse)
    - Avanceret: Vis/Skjul JSON
+   - Kompatibel med autoCalc() (som kan sætte både km og min)
 --------------------------------------------------------- */
 function renderEditor() {
   ensurePlan();
 
   const editorDiv = document.getElementById("sessionEditor");
-  const previewDiv = document.getElementById("jsonPreview");
+  if (!editorDiv) return;
 
-  if (!editorDiv || !previewDiv) return;
+  const session = getSelectedSession();
 
-  if (selectedSessionIndex === null) {
-    editorDiv.innerHTML = "Vælg et pas…";
-    previewDiv.innerHTML = "";
-    setJsonVisible(showJsonPreview);
-    return;
-  }
-
-  const sessions = getWeekSessions();
-  const session = sessions[selectedSessionIndex];
-
+  // Ingen valgt session
   if (!session) {
-    // hvis index er out of range (fx efter slet), nulstil
-    selectedSessionIndex = null;
     editorDiv.innerHTML = "Vælg et pas…";
-    previewDiv.innerHTML = "";
+    updateJsonPreview(null);
     setJsonVisible(showJsonPreview);
+    updateMainActiveSummary(null);
     return;
   }
 
-  // Bestem duration type ud fra data
-  // Default: distance (som din reference)
-  const inferredType = (session.duration_min != null && session.distance_km == null) ? "time" : "distance";
-  const durationValue =
-    inferredType === "time"
-      ? (session.duration_min ?? "")
-      : (session.distance_km ?? "");
+  // Hvis autoCalc har sat både distance_km og duration_min, skal UI ikke automatisk rydde noget
+  let lockAutoBoth = (session.distance_km != null && session.duration_min != null);
+
+  // Bestem type & value som UI skal vise
+  // Default: distance (som reference)
+  function inferTypeFromSession() {
+    if (session.distance_km != null && session.duration_min != null) {
+      lockAutoBoth = true;
+      return "distance";
+    }
+    lockAutoBoth = false;
+    return (session.duration_min != null && session.distance_km == null) ? "time" : "distance";
+  }
+
+  const inferredType = inferTypeFromSession();
+  const durationValue = inferredType === "time"
+    ? (session.duration_min ?? "")
+    : (session.distance_km ?? "");
 
   editorDiv.innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;">
       <div style="font-weight:800;">Rediger pas</div>
-      <button type="button" id="toggleJsonBtn" style="width:auto;margin-top:0;padding:6px 10px;border-radius:6px;">
+
+      <button type="button" id="toggleJsonBtn"
+        style="width:auto;margin-top:0;padding:6px 10px;border-radius:6px;">
         ${showJsonPreview ? "Skjul JSON" : "Vis JSON"}
       </button>
     </div>
@@ -323,14 +380,16 @@ function renderEditor() {
     </div>
   `;
 
-  // Init day
-  document.getElementById("day").value = String(clampDay(session.day));
+  // Init felter
+  const dayEl = document.getElementById("day");
+  dayEl.value = String(clampDay(session.day));
 
-  // Init durationType + help/placeholder
+  const titleEl = document.getElementById("title");
+  const noteEl = document.getElementById("note");
+
   const durationTypeEl = document.getElementById("durationType");
   const durationValueEl = document.getElementById("durationValue");
   const durationHelpEl = document.getElementById("durationHelp");
-  const durationValueLabelEl = document.getElementById("durationValueLabel");
 
   durationTypeEl.value = inferredType;
 
@@ -338,151 +397,38 @@ function renderEditor() {
     const t = durationTypeEl.value;
     if (t === "time") {
       durationValueEl.placeholder = "fx 30 min";
-      durationHelpEl.textContent = "Angiv tid i minutter (fx 30).";
-      durationValueLabelEl.textContent = "Varighed";
+      durationHelpEl.textContent = lockAutoBoth
+        ? "Auto-beregnet (både km og min). Redigér feltet hvis du vil overskrive."
+        : "Angiv tid i minutter (fx 30).";
     } else {
       durationValueEl.placeholder = "fx 5 km";
-      durationHelpEl.textContent = "Angiv distance i kilometer (fx 5).";
-      durationValueLabelEl.textContent = "Varighed";
-    }
-  }
-
-  function saveDurationToSession() {
-    const t = durationTypeEl.value;
-    const raw = durationValueEl.value.trim();
-
-    if (!raw) {
-      session.distance_km = null;
-      session.duration_min = null;
-      return;
-    }
-
-    const n = parseFirstNumber(raw);
-    if (n == null || n <= 0) {
-      session.distance_km = null;
-      session.duration_min = null;
-      return;
-    }
-
-    if (t === "distance") {
-      session.distance_km = n;
-      session.duration_min = null;
-      durationValueEl.value = String(n); // normaliser
-    } else {
-      session.duration_min = Math.round(n);
-      session.distance_km = null;
-      durationValueEl.value = String(Math.round(n)); // normaliser
-    }
-  }
-
-  // Hook: skift type opdaterer UI + gemmer
-  durationTypeEl.addEventListener("change", () => {
-    updateDurationUI();
-    saveDurationToSession();
-    previewDiv.textContent = JSON.stringify(session, null, 2);
-    renderMain();
-  });
-
-  // Hook: input i varighed gemmer live (så midterliste opdateres)
-  durationValueEl.addEventListener("input", () => {
-    saveDurationToSession();
-    previewDiv.textContent = JSON.stringify(session, null, 2);
-    renderMain();
-  });
-
-  durationValueEl.addEventListener("blur", () => {
-    saveDurationToSession();
-    previewDiv.textContent = JSON.stringify(session, null, 2);
-    renderMain();
-  });
-
-  // Toggle JSON
-  const toggleJsonBtn = document.getElementById("toggleJsonBtn");
-  toggleJsonBtn.addEventListener("click", () => {
-    setJsonVisible(!showJsonPreview);
-    toggleJsonBtn.textContent = showJsonPreview ? "Skjul JSON" : "Vis JSON";
-  });
-
-  // init UI + preview
-  updateDurationUI();
-  setJsonVisible(showJsonPreview);
-  previewDiv.textContent = JSON.stringify(session, null, 2);
-}
+      durationHelpEl.text
 
 /* =========================================================
-   GEM PAS
-   (udvidet: gemmer også varighed-type værdien korrekt)
+   UI.JS – Træningsplan Editor UI
+   ---------------------------------------------------------
+   Forventer at app.js definerer:
+     - let plan = { duration_weeks, sessions: [...] }
+     - let selectedWeek = 1;
+     - let selectedSessionIndex = null;
+
+   VIGTIGT:
+   selectedSessionIndex = index i sessions for valgt uge (FILTERED index)
+   (så autoCalc() / editSegments() fortsat virker som før)
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   HELPERS
 --------------------------------------------------------- */
-function saveSession() {
-  ensurePlan();
-
-  const sessions = getWeekSessions();
-  const session = sessions[selectedSessionIndex];
-  if (!session) return;
-
-  session.title = document.getElementById("title").value;
-  session.day = clampDay(document.getElementById("day").value);
-  session.note = document.getElementById("note").value;
-
-  // Varighed gemmes her også (så "Gem" altid er sandhed)
-  const durationTypeEl = document.getElementById("durationType");
-  const durationValueEl = document.getElementById("durationValue");
-
-  if (durationTypeEl && durationValueEl) {
-    const t = durationTypeEl.value;
-    const raw = durationValueEl.value.trim();
-    const n = parseFirstNumber(raw);
-
-    if (!raw || n == null || n <= 0) {
-      session.distance_km = null;
-      session.duration_min = null;
-    } else if (t === "distance") {
-      session.distance_km = n;
-      session.duration_min = null;
-    } else {
-      session.duration_min = Math.round(n);
-      session.distance_km = null;
-    }
+function ensurePlan() {
+  if (typeof window.plan !== "object" || window.plan === null) {
+    window.plan = {
+      plan_name: "Ny træningsplan",
+      duration_weeks: 12,
+      race_distance_km: null,
+      sessions: []
+    };
   }
+  if (!Array.isArray(plan.sessions)) plan.sessions = [];
+  if (!plan.duration_weeks) plan.duration_weeks = 12;
 
-  renderMain();
-  renderEditor();
-}
-
-/* =========================================================
-   TILFØJ NYT PAS
-   (uændret, men sikrer default distance)
---------------------------------------------------------- */
-function addSession() {
-  ensurePlan();
-
-  plan.sessions.push({
-    week: selectedWeek,
-    day: 1,
-    title: "Nyt pas",
-    distance_km: null,
-    duration_min: null,
-    note: "",
-    segments: []
-  });
-
-  // vælg det nyeste pas i ugen (filtered index)
-  const sessions = getWeekSessions();
-  selectedSessionIndex = sessions.length - 1;
-
-  renderMain();
-  renderEditor();
-}
-
-/* =========================================================
-   EXPORT FUNKTIONER TIL WINDOW
-   (så dine inline onclick virker)
-========================================================= */
-window.renderWeeks = renderWeeks;
-window.renderMain = renderMain;
-window.renderEditor = renderEditor;
-window.editSession = editSession;
-window.saveSession = saveSession;
-window.addSession = addSession;
-window.deleteSession = deleteSession;
-``
