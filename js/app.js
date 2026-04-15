@@ -19,13 +19,13 @@ let selectedSessionIndex = null;
    ===================================================== */
 
 function applyTheme() {
-  const isLight = document.body.classList.contains("light-mode");
+  const isDark = document.body.classList.contains("dark-mode");
   const btn = document.getElementById("themeToggle");
-  btn.textContent = isLight ? "Dark mode" : "Light mode";
+  btn.textContent = isDark ? "Light mode" : "Dark mode";
 }
 
 document.getElementById("themeToggle").onclick = () => {
-  document.body.classList.toggle("light-mode");
+  document.body.classList.toggle("dark-mode");
   applyTheme();
 };
 
