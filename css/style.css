@@ -351,3 +351,18 @@ body.dark-mode .segment-card {
   border-color: #333;
   color: #fff;
 }
+.duration-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.duration-field {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.duration-field input {
+  width: 60px;
+}
