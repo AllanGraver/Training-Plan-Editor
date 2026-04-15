@@ -56,12 +56,8 @@ function newPlan() {
   lib[name] = plan;
   saveLibrary(lib);
 
-  selectedWeek = 1;
-  selectedSessionIndex = null;
-
-  renderLibrary();
-  renderMain();
-  renderEditor();
+  // ⭐ Vælg planen med det samme
+  loadPlan(name);
 }
 
 /* =========================================================
@@ -77,6 +73,7 @@ function savePlan() {
   const lib = loadLibrary();
   lib[name] = plan;
   saveLibrary(lib);
+
   renderLibrary();
 }
 
@@ -93,7 +90,9 @@ function savePlanAs() {
   const lib = loadLibrary();
   lib[name] = plan;
   saveLibrary(lib);
-  renderLibrary();
+
+  // ⭐ Vælg den nye plan
+  loadPlan(name);
 }
 
 /* =========================================================
@@ -104,7 +103,7 @@ function loadPlan(name) {
   const lib = loadLibrary();
   plan = JSON.parse(JSON.stringify(lib[name]));
 
-  // Sikr at sessions har steps-array
+  // ⭐ Sikr at alle sessions har steps-array
   plan.sessions.forEach(s => {
     if (!Array.isArray(s.steps)) s.steps = [];
   });
@@ -148,20 +147,17 @@ function importPlan() {
       const fileName = file.name.replace(/\.json$/i, "");
       imported.plan_name = fileName;
 
-      // Sikr steps-array
+      // ⭐ Sikr steps-array
       imported.sessions.forEach(s => {
         if (!Array.isArray(s.steps)) s.steps = [];
       });
 
-      plan = imported;
-
       const lib = loadLibrary();
-      lib[fileName] = plan;
+      lib[fileName] = imported;
       saveLibrary(lib);
 
-      renderLibrary();
-      renderMain();
-      renderEditor();
+      // ⭐ Vælg planen med det samme
+      loadPlan(fileName);
     };
 
     reader.readAsText(file);
