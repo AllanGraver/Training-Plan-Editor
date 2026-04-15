@@ -206,4 +206,10 @@ input, select, textarea {
   font-family: monospace;
   font-size: 12px;
 }
-``
+
+.session-row.is-active {
+  background: #fff5ef;            /* meget lys orange-tint (matcher tema) */
+  border-left: 4px solid #fc4c02; /* din Strava orange */
+  padding-left: 10px;
+}
+
