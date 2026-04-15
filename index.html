@@ -13,7 +13,7 @@
 <body>
 
   <!-- =====================================================
-       TOP MENU (layout only – no colors added)
+       TOP MENU (layout only – no new colors required)
        ===================================================== -->
   <header class="app-header" role="banner">
     <div class="menu-left">
@@ -21,13 +21,16 @@
     </div>
 
     <nav class="menu-center" aria-label="Primær navigation">
-      <button class="menu-item" type="button" onclick="document.getElementById('sidebar')?.scrollIntoView({behavior:'smooth', block:'start'});">
+      <button class="menu-item" type="button"
+        onclick="document.getElementById('sidebar')?.scrollIntoView({behavior:'smooth', block:'start'});">
         Planer
       </button>
-      <button class="menu-item" type="button" onclick="document.getElementById('main')?.scrollIntoView({behavior:'smooth', block:'start'});">
+      <button class="menu-item" type="button"
+        onclick="document.getElementById('main')?.scrollIntoView({behavior:'smooth', block:'start'});">
         Oversigt
       </button>
-      <button class="menu-item" type="button" onclick="document.getElementById('editorPanel')?.scrollIntoView({behavior:'smooth', block:'start'});">
+      <button class="menu-item" type="button"
+        onclick="document.getElementById('editorPanel')?.scrollIntoView({behavior:'smooth', block:'start'});">
         Rediger pas
       </button>
     </nav>
@@ -42,35 +45,39 @@
   </header>
 
   <!-- =====================================================
-       EXISTING LAYOUT (unchanged)
+       WRAPPER: makes sidebar|main|editor stay in a row
        ===================================================== -->
-  <div id="sidebar">
-    <h2>Planer</h2>
+  <div class="app-shell">
 
-    <button onclick="newPlan()">+ Ny plan</button>
+    <div id="sidebar">
+      <h2>Planer</h2>
 
-    <div id="planLibrary"></div>
+      <button onclick="newPlan()">+ Ny plan</button>
 
-    <button onclick="savePlan()">Gem plan</button>
-    <button onclick="savePlanAs()">Gem som ny</button>
-    <button onclick="exportPlan()">Eksportér</button>
-    <button onclick="importPlan()">Importér</button>
+      <div id="planLibrary"></div>
 
-    <hr>
+      <button onclick="savePlan()">Gem plan</button>
+      <button onclick="savePlanAs()">Gem som ny</button>
+      <button onclick="exportPlan()">Eksportér</button>
+      <button onclick="importPlan()">Importér</button>
 
-    <h2>Uger</h2>
-    <div id="weekList"></div>
-    <button onclick="addSession()">+ Tilføj pas</button>
-  </div>
+      <hr>
 
-  <div id="main"></div>
+      <h2>Uger</h2>
+      <div id="weekList"></div>
+      <button onclick="addSession()">+ Tilføj pas</button>
+    </div>
 
-  <div id="editorPanel">
-    <h2>Rediger pas</h2>
-    <div id="sessionEditor">Vælg et pas…</div>
+    <div id="main"></div>
 
-    <h3>JSON</h3>
-    <div id="jsonPreview"></div>
+    <div id="editorPanel">
+      <h2>Rediger pas</h2>
+      <div id="sessionEditor">Vælg et pas…</div>
+
+      <h3>JSON</h3>
+      <div id="jsonPreview"></div>
+    </div>
+
   </div>
 
   <script src="js/library.js"></script>
@@ -81,3 +88,4 @@
 
 </body>
 </html>
+``
