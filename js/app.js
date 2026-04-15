@@ -15,7 +15,59 @@ let selectedWeek = 1;
 let selectedSessionIndex = null;
 
 /* =========================================================
-   UGEHÅNDTERING
+   LOAD LIBRARY (fra localStorage)
+   ========================================================= */
+
+function loadLibrary() {
+  const raw = localStorage.getItem("trainingLibrary");
+  if (!raw) return {};
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return {};
+  }
+}
+
+function saveLibrary(lib) {
+  localStorage.setItem("trainingLibrary", JSON.stringify(lib));
+}
+
+/* =========================================================
+   RENDER PLAN-LISTE (venstre panel)
+   ========================================================= */
+
+function renderLibrary() {
+  const lib = loadLibrary();
+  const container = document.getElementById("sidebarPlans");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  Object.keys(lib).forEach(name => {
+    const item = document.createElement("div");
+    item.className = "plan-item";
+    item.textContent = name;
+
+    // ⭐ Markér valgt plan
+    if (name === plan.plan_name) {
+      item.classList.add("selected");
+    }
+
+    item.onclick = () => {
+      plan = JSON.parse(JSON.stringify(lib[name]));
+      selectedWeek = 1;
+      selectedSessionIndex = null;
+      renderWeeks();
+      renderMain();
+      renderEditor();
+    };
+
+    container.appendChild(item);
+  });
+}
+
+/* =========================================================
+   UGE-LISTE (venstre panel)
    ========================================================= */
 
 function renderWeeks() {
@@ -27,34 +79,44 @@ function renderWeeks() {
   for (let w = 1; w <= (plan.duration_weeks || 12); w++) {
     const btn = document.createElement("button");
     btn.textContent = `Uge ${w}`;
-    btn.className = (w === selectedWeek) ? "week-button active" : "week-button";
+
+    // ⭐ Sort kant på valgt uge
+    btn.className = (w === selectedWeek)
+      ? "week-button active"
+      : "week-button";
+
     btn.onclick = () => {
       selectedWeek = w;
       selectedSessionIndex = null;
       renderMain();
       renderEditor();
     };
+
     weekList.appendChild(btn);
   }
 
   renderSessionsForWeek();
 }
 
-function renderSessionsForWeek() {
-  const sessionsThisWeek = plan.sessions.filter(s => s.week === selectedWeek);
-  const main = document.getElementById("main");
+/* =========================================================
+   SESSIONS FOR WEEK
+   ========================================================= */
 
-  if (!main) return;
-  if (sessionsThisWeek.length === 0) {
-    main.innerHTML = `
-      <h2>Ingen pas i uge ${selectedWeek}</h2>
-      <p>Tilføj et pas i venstre side.</p>
-    `;
+function getSessionsForWeek(week) {
+  return plan.sessions.filter(s => s.week === week);
+}
+
+function renderSessionsForWeek() {
+  const sessions = getSessionsForWeek(selectedWeek);
+
+  if (sessions.length === 0) {
+    selectedSessionIndex = null;
+    renderMain();
+    renderEditor();
     return;
   }
 
-  // Hvis ingen session valgt, vælg første
-  if (selectedSessionIndex == null || selectedSessionIndex >= sessionsThisWeek.length) {
+  if (selectedSessionIndex == null || selectedSessionIndex >= sessions.length) {
     selectedSessionIndex = 0;
   }
 
@@ -63,14 +125,41 @@ function renderSessionsForWeek() {
 }
 
 /* =========================================================
-   INIT / LOAD
+   ADD SESSION
+   ========================================================= */
+
+function addSession() {
+  const sessionsThisWeek = getSessionsForWeek(selectedWeek);
+
+  const newSession = {
+    id: Date.now(),
+    week: selectedWeek,
+    name: `Pas ${sessionsThisWeek.length + 1}`,
+    steps: [
+      { type: "warmup", durationType: "time", hours: 0, minutes: 5, seconds: 0, notes: "", intensity: "E" },
+      { type: "run", mode: "simple", durationType: "distance", distance: 1, notes: "", intensity: "T" },
+      { type: "cooldown", durationType: "time", hours: 0, minutes: 5, seconds: 0, notes: "", intensity: "E" }
+    ]
+  };
+
+  plan.sessions.push(newSession);
+
+  const sessions = getSessionsForWeek(selectedWeek);
+  selectedSessionIndex = sessions.length - 1;
+
+  renderMain();
+  renderEditor();
+}
+
+/* =========================================================
+   INIT APP
    ========================================================= */
 
 function initApp() {
-  // Forsøg at loade bibliotek og en plan
   const lib = loadLibrary();
   const names = Object.keys(lib);
 
+  // Hvis der findes planer i biblioteket → vælg første
   if (names.length > 0) {
     plan = JSON.parse(JSON.stringify(lib[names[0]]));
   }
@@ -85,17 +174,11 @@ function initApp() {
 }
 
 /* =========================================================
-   WINDOW BINDINGS
+   WINDOW EXPORTS
    ========================================================= */
 
+window.initApp = initApp;
+window.addSession = addSession;
+window.renderLibrary = renderLibrary;
 window.renderWeeks = renderWeeks;
 window.renderSessionsForWeek = renderSessionsForWeek;
-window.initApp = initApp;
-
-/* =========================================================
-   AUTO-INIT
-   ========================================================= */
-
-document.addEventListener("DOMContentLoaded", () => {
-  initApp();
-});
