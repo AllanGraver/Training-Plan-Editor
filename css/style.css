@@ -94,9 +94,12 @@ body {
   color: #fc4c02;
 }
 
+/* Kompakt planliste */
 .plan-item {
-  padding: 10px;
-  margin-bottom: 6px;
+  padding: 6px 8px;
+  margin-bottom: 4px;
+  font-size: 14px;
+  line-height: 1.2;
   background: #fafafa;
   border: 1px solid #ddd;
   border-radius: 6px;
@@ -110,11 +113,17 @@ body {
   border-color: #fc4c02;
 }
 
-button {
-  width: 100%;
-  padding: 10px;
-  margin-top: 8px;
-  border: none;
+/* Valgt plan */
+.plan-item.selected {
+  border: 2px solid black !important;
+  background: #ffe9dd;
+}
+
+/* Sidebar-knapper kompakte */
+#sidebar button {
+  padding: 6px 8px;
+  font-size: 14px;
+  margin-top: 6px;
   border-radius: 6px;
   background: #fc4c02;
   color: white;
@@ -123,8 +132,37 @@ button {
   transition: 0.2s;
 }
 
-button:hover {
+#sidebar button:hover {
   background: #d84302;
+}
+
+/* =====================================================
+   WEEK BUTTONS
+   ===================================================== */
+
+.week-button {
+  width: 100%;
+  padding: 6px 8px;
+  font-size: 14px;
+  margin-bottom: 4px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  background: #fafafa;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.week-button:hover {
+  background: #fc4c02;
+  color: white;
+  border-color: #fc4c02;
+}
+
+/* Valgt uge */
+.week-button.active {
+  background: #fc4c02;
+  color: white;
+  border: 2px solid black !important;
 }
 
 /* =====================================================
@@ -160,33 +198,6 @@ button:hover {
 .step-sub {
   color: #555;
   font-size: 14px;
-}
-
-/* =====================================================
-   WEEK BUTTONS
-   ===================================================== */
-
-.week-button {
-  width: 100%;
-  padding: 8px;
-  margin-bottom: 6px;
-  border-radius: 6px;
-  border: 1px solid #ddd;
-  background: #fafafa;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.week-button:hover {
-  background: #fc4c02;
-  color: white;
-  border-color: #fc4c02;
-}
-
-.week-button.active {
-  background: #fc4c02;
-  color: white;
-  border-color: #fc4c02;
 }
 
 /* =====================================================
