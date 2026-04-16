@@ -1,91 +1,48 @@
 <!DOCTYPE html>
 <html lang="da">
 <head>
-  <meta charset="UTF-8" />
-  <title>TRÆNINGSPLAN EDITOR</title>
-
-  <!-- JSONEditor via CDN -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsoneditor@9.10.0/dist/jsoneditor.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/jsoneditor@9.10.0/dist/jsoneditor.min.js"></script>
-
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="icon" href="data:,">
+  <meta charset="UTF-8">
+  <title>Træningsplan editor</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-
-  <!-- =====================================================
-       HEADER – Strava orange + toggle til højre
-       ===================================================== -->
-  <header class="app-header" role="banner">
-    <span class="app-title">TRÆNINGSPLAN EDITOR</span>
-    <button id="themeToggle" class="theme-toggle">Light mode</button>
+  <header class="app-header">
+    <div class="app-title">Træningsplan editor</div>
+    <button class="theme-toggle" onclick="toggleTheme()">Tema</button>
   </header>
 
-  <!-- =====================================================
-       APP SHELL – 3 kolonner (sidebar, main, editor)
-       ===================================================== -->
   <div class="app-shell">
+    <!-- VENSTRE PANEL / SIDEBAR -->
+    <aside id="sidebar">
+      <h3>Planer</h3>
+      <div id="planList"></div>
 
-    <!-- =====================================================
-         SIDEBAR – Planer + Uger + Handlinger
-         ===================================================== -->
-    <div id="sidebar" tabindex="-1">
+      <button onclick="createNewPlan()">+ Ny plan</button>
 
-      <h2>Træningsplaner</h2>
+      <h3>Uger</h3>
+      <div id="weekButtons"></div>
+    </aside>
 
-      <div class="plan-button-row">
-        <button onclick="newPlan()">Ny</button>
-        <button onclick="savePlan()">Gem</button>
-        <button onclick="savePlanAs()">Gem som</button>
-        <button onclick="exportPlan()">Eksport</button>
-        <button onclick="importPlan()">Import</button>
-      </div>
-
-      <div id="sidebarPlans"></div>
-
-      <hr>
-
-      <h2>Træningsplan oversigt</h2>
-      <div id="weekList"></div>
-
-      <button onclick="addWeek()">+ Tilføj træningsuge</button>
-    </div>
-
-    <!-- =====================================================
-         MAIN PANEL – Oversigt over ugens pas
-         ===================================================== -->
-    <div id="mainPanel">
-
+    <!-- MIDTERPANEL -->
+    <main id="mainPanel">
       <h2 id="mainTitle">Træningspas</h2>
-      
       <div id="main" tabindex="-1"></div>
       <button id="addSessionBtn" onclick="addSession()">+ Tilføj træningspas</button>
-    </div>
+    </main>
 
-    <!-- =====================================================
-         EDITOR PANEL – Rediger valgt pas
-         ===================================================== -->
-    <div id="editorPanel" tabindex="-1">
-      <h2>Træningspas detaljer</h2>
-      <div id="sessionEditor"><= Vælg et træningspas…</div>
+    <!-- HØJRE PANEL / EDITOR -->
+    <aside id="editorPanel">
+      <div id="sessionEditor">Vælg et pas…</div>
 
       <h3>JSON preview</h3>
-      <div id="jsonPreview"></div>
-    </div>
-
+      <pre id="jsonPreview"></pre>
+    </aside>
   </div>
 
-  <!-- =====================================================
-       SCRIPTS (versioneret for at undgå cache)
-       ===================================================== -->
-  <script src="js/app.js?v=3"></script>
-  <script src="js/library.js?v=3"></script>
-  <script src="js/weeks.js?v=3"></script>
-  <script src="js/sessions.js?v=3"></script>
-  <script src="js/steps.js?v=3"></script>
-  <script src="js/segments.js?v=3"></script>
-  <script src="js/autocalc.js?v=3"></script>
-
+  <script src="weeks.js"></script>
+  <script src="sessions.js"></script>
+  <script src="steps.js"></script>
+  <script src="segments.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
