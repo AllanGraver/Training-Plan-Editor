@@ -37,7 +37,7 @@ applyTheme();
    ========================================================= */
 
 function loadLibrary() {
-  const raw = localStorage.getItem("trainingLibrary");
+  const raw = localStorage.getItem("training_plans_library");
   if (!raw) return {};
   try {
     return JSON.parse(raw);
@@ -47,7 +47,7 @@ function loadLibrary() {
 }
 
 function saveLibrary(lib) {
-  localStorage.setItem("trainingLibrary", JSON.stringify(lib));
+  localStorage.setItem("training_plans_library", JSON.stringify(lib));
 }
 
 /* =========================================================
