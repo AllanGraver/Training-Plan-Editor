@@ -16,31 +16,6 @@ function getCurrentSession() {
   return sessions[selectedSessionIndex];
 }
 
-/* =========================================================
-   RENDER MAIN (MIDTERSEKTION)
-   ========================================================= */
-
-function renderMain() {
-  const main = document.getElementById("main");
-  const session = getCurrentSession();
-
-  if (!session) {
-    main.innerHTML = `
-      <h2>Ingen pas valgt</h2>
-      <p>Vælg et pas i listen til venstre eller opret et nyt.</p>
-    `;
-    return;
-  }
-
-  main.innerHTML = `
-    <h2>${session.name || "Træningspas"}</h2>
-    <div class="step-list">
-      ${session.steps.map((step, i) => renderStepCard(step, i)).join("")}
-    </div>
-    <button type="button" onclick="addStep()">+ Tilføj trin</button>
-  `;
-}
-
 function renderStepCard(step, index) {
   const colors = {
     warmup: "#fc4c02",
@@ -54,49 +29,50 @@ function renderStepCard(step, index) {
   const color = colors[step.type] || "#ffffff";
 
   return `
-    <div class="step-card" style="border-left: 6px solid ${color};"
-         onclick="editStep(${index})">
-      <div class="step-title">${stepTitle(step)}</div>
+    <div class="step-card" style="border-left: 6px solid ${color};" onclick="editStep(${index})">
+
+      <div class="step-card-header">
+        <div class="step-title">${stepTitle(step)}</div>
+
+        <div class="step-actions" onclick="event.stopPropagation()">
+
+          <!-- Flyt op -->
+          <span class="step-action-btn" onclick="moveStepUp(${index})">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                 stroke-linejoin="round">
+              <polyline points="18 15 12 9 6 15"></polyline>
+            </svg>
+          </span>
+
+          <!-- Flyt ned -->
+          <span class="step-action-btn" onclick="moveStepDown(${index})">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                 stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </span>
+
+          <!-- Slet (samme ikon som venstre panel) -->
+          <span class="step-action-btn delete" onclick="deleteStep(${index})">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                 stroke-linejoin="round">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6l-1 14H6L5 6"></path>
+              <path d="M10 11v6"></path>
+              <path d="M14 11v6"></path>
+              <path d="M9 6V4h6v2"></path>
+            </svg>
+          </span>
+
+        </div>
+      </div>
+
       <div class="step-sub">${stepSubtitle(step)}</div>
     </div>
   `;
-}
-
-function stepTitle(step) {
-  const map = {
-    warmup: "Opvarmning",
-    run: step.mode === "interval" ? "Løb – Intervaller" : "Løb",
-    recovery: "Restitution",
-    rest: "Hvile",
-    cooldown: "Nedkøling",
-    other: "Andet"
-  };
-  return map[step.type] || step.type;
-}
-
-function stepSubtitle(step) {
-  if (step.type === "run" && step.mode === "interval") {
-    if (!step.segments || step.segments.length === 0) return "Intervaller";
-
-    const seg = step.segments[0];
-    const reps = seg.repetitions || 1;
-
-    const pattern = seg.steps
-      .map(s => `${s.duration_min} min ${s.note || ""}`.trim())
-      .join(" + ");
-
-    return `${reps} × (${pattern})`;
-  }
-
-  if (step.durationType === "time") {
-    return `${step.hours || 0}t ${step.minutes || 0}m ${step.seconds || 0}s`;
-  }
-
-  if (step.durationType === "distance") {
-    return `${step.distance || 0} km`;
-  }
-
-  return "—";
 }
 
 /* =========================================================
