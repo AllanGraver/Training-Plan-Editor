@@ -280,7 +280,7 @@ function renderIntensityField(step, index) {
       <option value="M" ${step.intensity === "M" ? "selected" : ""}>M: Marathon Pace</option>
       <option value="T" ${step.intensity === "T" ? "selected" : ""}>T: Tempo Pace</option>
       <option value="I" ${step.intensity === "I" ? "selected" : ""}>I: Interval Pace</option>
-      <option value="R" ${step.intensity === "R" ? "selected" : ""}>R: Restitution Pace</option>
+      <option value="R" ${step.intensity === "R" ? "selected" : ""}>R: Repetition Pace</option>
     </select>
   `;
 }
