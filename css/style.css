@@ -5,8 +5,10 @@
 body {
   margin: 0;
   font-family: "Segoe UI", Arial, sans-serif;
+
   display: flex;
   flex-direction: column;
+
   height: 100vh;
   background: #f2f2f2;
   color: #000;
@@ -23,6 +25,7 @@ body {
   flex: 1;
   min-height: 0;
   overflow: hidden;
+  gap: 0;
 }
 
 /* =====================================================
@@ -51,6 +54,7 @@ body {
    ===================================================== */
 
 .theme-toggle {
+  margin-left: auto;
   padding: 6px 12px;
   background: #ffffff22;
   color: #fff;
@@ -77,33 +81,7 @@ body {
   box-shadow: 0 0 6px rgba(0,0,0,0.05);
 }
 
-#sidebar h2 {
-  margin-top: 0;
-  margin-bottom: 10px;
-  font-size: 18px;
-  font-weight: 700;
-}
-
-/* Sidebar-knapper */
-#sidebar button {
-  padding: 6px 8px;
-  font-size: 13px;
-  margin-top: 6px;
-  border-radius: 6px;
-  background: #fc4c02;
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.15s;
-  border: none;
-}
-
-#sidebar button:hover {
-  background: #e04402;
-  transform: translateY(-1px);
-}
-
-/* Plan-liste */
+/* Plan-række med skraldespand */
 .plan-item-row {
   display: flex;
   align-items: center;
@@ -111,11 +89,12 @@ body {
   margin-bottom: 4px;
 }
 
+/* Plan-knap */
 .plan-item {
   flex: 1;
-  padding: 6px 8px;
+  padding: 5px 6px;
   font-size: 13px;
-  background: #fafafa;
+  background: #f7f7f7;
   border: 1px solid #ddd;
   border-radius: 6px;
   cursor: pointer;
@@ -133,19 +112,38 @@ body {
   background: #ffe9dd;
 }
 
-/* Skraldespand */
+/* Skraldespands-ikon */
 .delete-plan {
   cursor: pointer;
-  color: #888;
-  padding: 4px;
+  color: #777;
+  padding: 3px;
   border-radius: 4px;
-  margin-left: 6px;
+  margin-left: 4px;
   transition: 0.2s;
 }
 
 .delete-plan:hover {
   color: #fc4c02;
-  background: #ffffff22;
+  background: #ffe9dd;
+}
+
+/* Sidebar-knapper */
+#sidebar button {
+  padding: 5px 8px;
+  font-size: 13px;
+  margin-top: 4px;
+  border-radius: 6px;
+  background: #fc4c02;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.15s;
+  border: none;
+}
+
+#sidebar button:hover {
+  background: #e04402;
+  transform: translateY(-1px);
 }
 
 /* =====================================================
@@ -181,11 +179,10 @@ body {
    ===================================================== */
 
 #mainPanel {
-  background: #ffffff;
   padding: 15px;
   overflow-y: auto;
-  border-left: 1px solid #ccc;
-  border-right: 1px solid #ccc;
+  min-width: 0;
+  background: #f7f7f7;
 }
 
 #mainPanel h2 {
@@ -196,16 +193,84 @@ body {
   color: #333;
 }
 
-#main {
-  padding: 10px 0;
-  min-height: 50px;
+/* Session-kort (træningspas) */
+
+.session-card {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  cursor: pointer;
+  transition: 0.2s;
 }
 
-/* Træningspas-kort */
+.session-card.selected {
+  border: 2px solid #000;
+}
+
+.session-card:hover {
+  background: #fff5ef;
+}
+
+.session-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.session-title {
+  font-weight: 700;
+  font-size: 15px;
+}
+
+/* Ugedags-dropdown i midterpanelet */
+.session-day-select {
+  padding: 4px 6px;
+  font-size: 13px;
+  border-radius: 6px;
+  border: 1px solid #bbb;
+  background: #fff;
+  margin-left: auto;
+}
+
+.session-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Strava-stil knapper i bunden af hvert pas */
+.session-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.session-actions button {
+  flex: 1;
+  padding: 8px;
+  background: #fc4c02;
+  color: white;
+  border-radius: 6px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.15s;
+}
+
+.session-actions button:hover {
+  background: #e04402;
+}
+
+/* =====================================================
+   STEP CARDS
+   ===================================================== */
+
 .step-card {
   background: white;
-  padding: 12px;
-  margin-bottom: 12px;
+  padding: 10px;
   border-radius: 8px;
   cursor: pointer;
   box-shadow: 0 1px 3px rgba(0,0,0,0.08);
@@ -214,6 +279,12 @@ body {
 
 .step-card:hover {
   background: #fff5ef;
+}
+
+.step-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .step-title {
@@ -225,29 +296,12 @@ body {
   color: #555;
   font-size: 14px;
 }
-/* =====================================================
-   KOMPAKT TOP-RIGHT ACTION BAR PÅ TRIN
-   ===================================================== */
 
-.step-card {
-  position: relative;
-  padding-top: 10px;
-  padding-right: 40px; /* plads til knapperne */
-}
-
-.step-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 4px;
-}
+/* Step actions (flyt/slet) */
 
 .step-actions {
   display: flex;
-  gap: 4px;
-  position: absolute;
-  top: 8px;
-  right: 8px;
+  gap: 6px;
 }
 
 .step-action-btn {
@@ -255,7 +309,8 @@ body {
   padding: 4px;
   border-radius: 4px;
   color: #666;
-  transition: 0.15s;
+  transition: 0.2s;
+  font-size: 12px;
 }
 
 .step-action-btn:hover {
@@ -268,40 +323,6 @@ body {
   color: #d00000;
 }
 
-/* Dark mode */
-body.dark-mode .step-action-btn:hover {
-  background: #333;
-  color: #fc4c02;
-}
-
-body.dark-mode .step-action-btn.delete:hover {
-  background: #552222;
-  color: #ff4444;
-}
-/* =====================================================
-   TILFØJ TRÆNINGSPAS – SAMME STIL SOM SIDEBAR
-   ===================================================== */
-
-#addSessionBtn {
-  display: block;
-  width: 100%;
-  padding: 6px 8px;
-  margin-top: 12px;
-  font-size: 13px;
-  font-weight: 600;
-  border-radius: 6px;
-  background: #fc4c02;
-  color: white;
-  border: none;
-  cursor: pointer;
-  transition: 0.15s;
-}
-
-#addSessionBtn:hover {
-  background: #e04402;
-  transform: translateY(-1px);
-}
-
 /* =====================================================
    EDITOR PANEL
    ===================================================== */
@@ -309,14 +330,9 @@ body.dark-mode .step-action-btn.delete:hover {
 #editorPanel {
   background: #ffffff;
   border-left: 1px solid #ccc;
-  padding: 15px;
+  padding: 12px;
   overflow-y: auto;
-}
-
-#editorPanel h2 {
-  margin-top: 0;
-  font-size: 20px;
-  font-weight: 700;
+  box-shadow: 0 0 6px rgba(0,0,0,0.05);
 }
 
 #editorPanel h3 {
@@ -326,7 +342,6 @@ body.dark-mode .step-action-btn.delete:hover {
   color: #fc4c02;
 }
 
-/* Inputs */
 label {
   display: block;
   margin-top: 8px;
@@ -352,7 +367,10 @@ textarea:focus {
   outline: none;
 }
 
-/* JSON preview */
+/* =====================================================
+   JSON PREVIEW
+   ===================================================== */
+
 #jsonPreview {
   background: #1e1e1e;
   color: #dcdcdc;
@@ -366,7 +384,22 @@ textarea:focus {
 }
 
 /* =====================================================
-   DARK MODE
+   SEGMENT EDITOR (hvis du bruger den)
+   ===================================================== */
+
+.segment-card {
+  background: #fafafa;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 12px;
+}
+
+.segment-card strong {
+  color: #fc4c02;
+}
+
+/* =====================================================
+   DARK MODE OVERRIDES
    ===================================================== */
 
 body.dark-mode {
@@ -375,14 +408,9 @@ body.dark-mode {
 }
 
 body.dark-mode #sidebar,
-body.dark-mode #mainPanel,
-body.dark-mode #editorPanel {
+body.dark-mode #editorPanel,
+body.dark-mode #mainPanel {
   background: #111;
-  color: #fff;
-}
-
-body.dark-mode #mainPanel h2,
-body.dark-mode #editorPanel h2 {
   color: #fff;
 }
 
@@ -394,6 +422,21 @@ body.dark-mode .plan-item {
 
 body.dark-mode .plan-item:hover {
   background: #fc4c02;
+  color: #fff;
+}
+
+body.dark-mode .plan-item.selected {
+  background: #2a2a2a;
+  border: 2px solid #fff !important;
+}
+
+body.dark-mode .delete-plan {
+  color: #aaa;
+}
+
+body.dark-mode .delete-plan:hover {
+  color: #fc4c02;
+  background: #333;
 }
 
 body.dark-mode .week-button {
@@ -405,6 +448,11 @@ body.dark-mode .week-button {
 body.dark-mode .week-button.active {
   background: #fc4c02;
   border: 2px solid #fff !important;
+}
+
+body.dark-mode .session-card {
+  background: #1a1a1a;
+  color: #fff;
 }
 
 body.dark-mode .step-card {
@@ -420,36 +468,14 @@ body.dark-mode textarea {
   border: 1px solid #555;
 }
 
-body.dark-mode #addSessionBtn {
-  background: #333;
-  border: 1px solid #555;
-}
-
-body.dark-mode #addSessionBtn:hover {
-  background: #444;
-}
-.compact-day-select {
-  width: 140px;
-  padding: 4px 6px;
-  font-size: 13px;
-  border-radius: 6px;
-  border: 1px solid #bbb;
-  background: #fff;
-}
-
-body.dark-mode .compact-day-select {
-  background: #222;
+body.dark-mode .segment-card {
+  background: #1a1a1a;
+  border-color: #333;
   color: #fff;
-  border: 1px solid #555;
 }
-/* Kompakt dropdown til ugedag i midterpanelet */
-.session-day-select {
-  padding: 4px 6px;
-  font-size: 13px;
-  border-radius: 6px;
-  border: 1px solid #bbb;
-  background: #fff;
-  margin-left: auto;
+
+body.dark-mode #mainPanel h2 {
+  color: #fff;
 }
 
 body.dark-mode .session-day-select {
@@ -458,15 +484,68 @@ body.dark-mode .session-day-select {
   border: 1px solid #555;
 }
 
-/* Midterpanelets overskrift */
-#mainPanel h2 {
-  margin-top: 0;
-  margin-bottom: 12px;
-  font-size: 20px;
-  font-weight: 700;
-  color: #333;
+/* =====================================================
+   DURATION ROW
+   ===================================================== */
+
+.duration-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
 }
 
-body.dark-mode #mainPanel h2 {
+.duration-field {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.duration-field input {
+  width: 60px;
+}
+
+/* =====================================================
+   OVERSKRIV PANELBREDDER
+   ===================================================== */
+
+#sidebar,
+#mainPanel,
+#editorPanel {
+  width: auto !important;
+  flex: none !important;
+  height: calc(100vh - 60px);
+  overflow-y: auto;
+}
+
+/* TILFØJ TRÆNINGSPAS KNAP */
+
+#addSessionBtn {
+  display: block;
+  width: 100%;
+  padding: 6px 8px;
+  margin-top: 8px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 6px;
+  background: #fc4c02;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: 0.15s;
+}
+
+#addSessionBtn:hover {
+  background: #e04402;
+  transform: translateY(-1px);
+}
+
+body.dark-mode #addSessionBtn {
+  background: #333;
   color: #fff;
+  border: 1px solid #555;
+}
+
+body.dark-mode #addSessionBtn:hover {
+  background: #444;
 }
