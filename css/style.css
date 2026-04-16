@@ -437,3 +437,56 @@ body.dark-mode .step-action-btn.delete:hover {
   height: calc(100vh - 60px);
   overflow-y: auto;
 }
+/* =====================================================
+   KOMPAKTE OG PÆNERE SIDEBAR-KNAPPER
+   ===================================================== */
+
+#sidebar button {
+  padding: 5px 8px;
+  font-size: 13px;
+  margin-top: 4px;
+  border-radius: 6px;
+  background: #fc4c02;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.15s;
+  border: none;
+}
+
+#sidebar button:hover {
+  background: #e04402;
+  transform: translateY(-1px);
+}
+
+/* Gør plan-knapperne endnu mere kompakte og elegante */
+.plan-item {
+  padding: 5px 6px;
+  font-size: 13px;
+  border-radius: 6px;
+  background: #f7f7f7;
+  border: 1px solid #ddd;
+}
+
+.plan-item:hover {
+  background: #fc4c02;
+  color: white;
+  border-color: #fc4c02;
+}
+
+.plan-item-row {
+  margin-bottom: 3px;
+}
+
+/* Skraldespanden mindre og mere elegant */
+.delete-plan {
+  padding: 3px;
+  margin-left: 4px;
+  color: #777;
+  border-radius: 4px;
+}
+
+.delete-plan:hover {
+  background: #ffe9dd;
+  color: #fc4c02;
+}
