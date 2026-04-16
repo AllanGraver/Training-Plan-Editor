@@ -18,7 +18,7 @@ function addSession() {
   const newSession = {
     id: Date.now(),
     week: selectedWeek,
-    name: `Pas ${sessionsThisWeek.length + 1}`,
+    name: `Træningpas ${sessionsThisWeek.length + 1}`,
     steps: [
       {
         type: "warmup",
