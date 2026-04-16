@@ -2,8 +2,8 @@
 /* =========================================================
    FILE: steps.js
    PURPOSE:
-   - Højre panel: editor for træningspas og trin (steps)
-   - Redigering af pas-navn, ugedag, type, noter, varighed, intensitet
+   - Højre panel: editor for trin (steps)
+   - Redigering af ugedag, type, noter, varighed, intensitet
    - Run-mode toggle (simpelt / intervaller)
    - Flyt/slet/tilføj trin + JSON preview
    ========================================================= */
@@ -25,7 +25,6 @@ function renderEditor() {
     return;
   }
 
-  // Hvis der er trin, vis første trin i editoren
   if (session.steps.length > 0) {
     editStep(0);
   } else {
@@ -36,7 +35,7 @@ function renderEditor() {
 
 
 /* ============================
-   EDIT STEP (inkl. pas-navn + ugedag)
+   EDIT STEP (med kompakt ugedag)
    ============================ */
 
 function editStep(index) {
@@ -52,13 +51,9 @@ function editStep(index) {
   editor.innerHTML = `
     <h3>Træningspas</h3>
 
-    <label>Navn på træningspas</label>
-    <input type="text"
-           value="${session.name || ""}"
-           onchange="updateSessionField('name', this.value)">
-
     <label>Ugedag</label>
-    <select onchange="updateSessionField('day', this.value)">
+    <select class="compact-day-select"
+            onchange="updateSessionField('day', this.value)">
       ${["Mandag","Tirsdag","Onsdag","Torsdag","Fredag","Lørdag","Søndag"]
         .map(d => `<option value="${d}" ${d === currentDay ? "selected" : ""}>${d}</option>`)
         .join("")}
@@ -99,7 +94,7 @@ function editStep(index) {
 
 
 /* ============================
-   OPDATERING AF PAS-FELTER (NAVN / UGEDAG)
+   OPDATERING AF PAS-FELTER (kun ugedag)
    ============================ */
 
 function updateSessionField(key, value) {
