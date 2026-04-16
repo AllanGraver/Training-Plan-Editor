@@ -2,12 +2,14 @@
 /* =========================================================
    FILE: sessions.js
    PURPOSE:
-   - Håndterer pas (sessions) i en uge
-   - Tilføj pas, vælg pas, renderMain() (midterpanelet)
+   - Håndterer træningspas (sessions) i en uge
+   - Viser ugens pas i midterpanelet (renderMain)
+   - Tilføjer nye træningspas (addSession)
+   - Vælger hvilket pas der er aktivt (selectSession)
    ========================================================= */
 
 /* ============================
-   TILFØJ PAS
+   TILFØJ TRÆNINGSPAS
    ============================ */
 
 function addSession() {
@@ -50,12 +52,12 @@ function addSession() {
   // Tilføj pas til planen
   plan.sessions.push(newSession);
 
-  // ❗ VIGTIGT: Rør IKKE selectedSessionIndex
-  // selectedSessionIndex = sessions.length - 1;  <-- DENNE LINJE SKAL VÆK
+  // ❗ VIGTIGT: Vi vælger IKKE automatisk det nye pas
+  // selectedSessionIndex = sessions.length - 1;  <-- fjernet
 
   // Opdater UI
-  renderMain();     // viser det nye pas i midten
-  renderEditor();   // viser "Vælg et pas…" i højre panel
+  renderMain();     // viser det nye pas i midterpanelet
+  renderEditor();   // højre panel viser "Vælg et pas…"
 }
 
 /* ============================
@@ -169,7 +171,7 @@ function renderMain() {
   const sessions = getSessionsForWeek(selectedWeek);
 
   if (sessions.length === 0) {
-    main.innerHTML = "<p>Ingen pas i denne uge endnu.</p>";
+    main.innerHTML = "<p>Ingen træningspas i denne uge endnu.</p>";
     return;
   }
 
@@ -191,6 +193,10 @@ function renderMain() {
 
   main.innerHTML = html;
 }
+
+/* ============================
+   VÆLG TRÆNINGSPAS
+   ============================ */
 
 function selectSession(index) {
   selectedSessionIndex = index;
