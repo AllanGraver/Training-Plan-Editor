@@ -316,6 +316,38 @@ function addStep() {
   renderMain();
   renderEditor();
 }
+function deleteStep(index) {
+  const session = getCurrentSession();
+  session.steps.splice(index, 1);
+  renderMain();
+  renderEditor();
+  updateJsonPreview(session);
+}
+
+function moveStepUp(index) {
+  const session = getCurrentSession();
+  if (index === 0) return;
+
+  const tmp = session.steps[index];
+  session.steps[index] = session.steps[index - 1];
+  session.steps[index - 1] = tmp;
+
+  renderMain();
+  editStep(index - 1);
+}
+
+function moveStepDown(index) {
+  const session = getCurrentSession();
+  if (index === session.steps.length - 1) return;
+
+  const tmp = session.steps[index];
+  session.steps[index] = session.steps[index + 1];
+  session.steps[index + 1] = tmp;
+
+  renderMain();
+  editStep(index + 1);
+}
+
 
 /* =========================================================
    JSON PREVIEW
