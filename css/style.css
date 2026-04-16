@@ -442,3 +442,31 @@ body.dark-mode .compact-day-select {
   color: #fff;
   border: 1px solid #555;
 }
+/* Kompakt dropdown til ugedag i midterpanelet */
+.session-day-select {
+  padding: 4px 6px;
+  font-size: 13px;
+  border-radius: 6px;
+  border: 1px solid #bbb;
+  background: #fff;
+  margin-left: auto;
+}
+
+body.dark-mode .session-day-select {
+  background: #222;
+  color: #fff;
+  border: 1px solid #555;
+}
+
+/* Midterpanelets overskrift */
+#mainPanel h2 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #333;
+}
+
+body.dark-mode #mainPanel h2 {
+  color: #fff;
+}
