@@ -47,13 +47,15 @@ function addSession() {
     ]
   };
 
+  // Tilføj pas til planen
   plan.sessions.push(newSession);
 
-  const sessions = getSessionsForWeek(selectedWeek);
-  selectedSessionIndex = sessions.length - 1;
+  // ❗ VIGTIGT: Rør IKKE selectedSessionIndex
+  // selectedSessionIndex = sessions.length - 1;  <-- DENNE LINJE SKAL VÆK
 
-  renderMain();
-  renderEditor();
+  // Opdater UI
+  renderMain();     // viser det nye pas i midten
+  renderEditor();   // viser "Vælg et pas…" i højre panel
 }
 
 /* ============================
