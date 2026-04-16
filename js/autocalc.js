@@ -1,5 +1,14 @@
+"use strict";
+/* =========================================================
+   FILE: autocalc.js
+   PURPOSE:
+   - Automatisk beregning af distance og varighed
+   - Bruger segments på et session-objekt
+   ========================================================= */
+
 function autoCalc() {
   const session = plan.sessions.filter(s => s.week === selectedWeek)[selectedSessionIndex];
+  if (!session || !session.segments) return;
 
   let totalKm = 0;
   let totalMin = 0;
@@ -26,3 +35,9 @@ function autoCalc() {
   renderMain();
   renderEditor();
 }
+
+/* ============================
+   WINDOW EXPORT
+   ============================ */
+
+window.autoCalc = autoCalc;
