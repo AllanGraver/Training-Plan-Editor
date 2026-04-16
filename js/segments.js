@@ -1,11 +1,16 @@
 "use strict";
-
 /* =========================================================
-   INTERVAL-EDITOR (SEGMENTS)
+   FILE: segments.js
+   PURPOSE:
+   - Interval-editor for run-steps i mode "interval"
+   - Redigering af segments, repetitions og steps i segmenter
+   - Opdaterer JSON preview og main-view
    ========================================================= */
 
 function editSegments(stepIndex) {
   const session = getCurrentSession();
+  if (!session) return;
+
   const step = session.steps[stepIndex];
 
   if (!step.segments) {
@@ -13,14 +18,12 @@ function editSegments(stepIndex) {
   }
 
   const editor = document.getElementById("sessionEditor");
+  if (!editor) return;
+
   editor.innerHTML = `
     <h3>Intervaller</h3>
     <p>Rediger segmenter og steps for dette intervaltrin.</p>
   `;
-
-  /* =========================================================
-     SEGMENT-LISTE
-     ========================================================= */
 
   const container = document.createElement("div");
   container.style.display = "flex";
@@ -44,10 +47,6 @@ function editSegments(stepIndex) {
              data-seg="${segIndex}" data-field="repetitions"
              style="width:80px; margin-bottom:10px;">
     `;
-
-    /* =========================================================
-       STEPS I SEGMENTET
-       ========================================================= */
 
     const stepList = document.createElement("div");
     stepList.style.marginTop = "10px";
@@ -82,10 +81,6 @@ function editSegments(stepIndex) {
 
     segCard.appendChild(stepList);
 
-    /* =========================================================
-       TILFØJ STEP
-       ========================================================= */
-
     const addStepBtn = document.createElement("button");
     addStepBtn.textContent = "➕ Tilføj step";
     addStepBtn.dataset.seg = segIndex;
@@ -94,10 +89,6 @@ function editSegments(stepIndex) {
       editSegments(stepIndex);
     };
     segCard.appendChild(addStepBtn);
-
-    /* =========================================================
-       SLET SEGMENT
-       ========================================================= */
 
     const deleteSegBtn = document.createElement("button");
     deleteSegBtn.textContent = "🗑️ Slet segment";
@@ -112,10 +103,6 @@ function editSegments(stepIndex) {
     container.appendChild(segCard);
   });
 
-  /* =========================================================
-     TILFØJ NYT SEGMENT
-     ========================================================= */
-
   const addSegBtn = document.createElement("button");
   addSegBtn.textContent = "➕ Tilføj nyt segment";
   addSegBtn.onclick = () => {
@@ -129,10 +116,6 @@ function editSegments(stepIndex) {
     editSegments(stepIndex);
   };
   editor.appendChild(addSegBtn);
-
-  /* =========================================================
-     INPUT HANDLING
-     ========================================================= */
 
   editor.querySelectorAll("input").forEach(input => {
     input.onchange = () => {
@@ -160,15 +143,11 @@ function editSegments(stepIndex) {
     };
   });
 
-  /* =========================================================
-     OPDATER JSON PREVIEW
-     ========================================================= */
-
   updateJsonPreview(session);
 }
 
-/* =========================================================
-   EKSPORTER FUNKTION
-   ========================================================= */
+/* ============================
+   WINDOW EXPORT
+   ============================ */
 
 window.editSegments = editSegments;
