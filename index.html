@@ -34,14 +34,16 @@
 
       <h2>Planer</h2>
 
-      <button onclick="newPlan()">+ Ny plan</button>
+      <div class="plan-button-row">
+        <button onclick="newPlan()">Ny</button>
+        <button onclick="savePlan()">Gem</button>
+        <button onclick="savePlanAs()">Gem som</button>
+        <button onclick="exportPlan()">Eksport</button>
+        <button onclick="importPlan()">Import</button>
+      </div>
 
       <div id="sidebarPlans"></div>
 
-      <button onclick="savePlan()">Gem plan</button>
-      <button onclick="savePlanAs()">Gem som</button>
-      <button onclick="exportPlan()">Eksportér</button>
-      <button onclick="importPlan()">Importér</button>
 
       <hr>
 
