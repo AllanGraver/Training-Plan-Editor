@@ -1,11 +1,11 @@
 "use strict";
+
 /* =========================================================
    FILE: sessions.js
    PURPOSE:
-   - Håndterer træningspas (sessions) i en uge
-   - Viser ugens pas i midterpanelet (renderMain)
-   - Tilføjer nye træningspas (addSession)
-   - Vælger hvilket pas der er aktivt (selectSession)
+   - Håndterer træningspas (sessions)
+   - Viser ugens pas i midterpanelet
+   - Ugedag vælges i midterpanelet
    ========================================================= */
 
 
@@ -19,8 +19,8 @@ function addSession() {
   const newSession = {
     id: Date.now(),
     week: selectedWeek,
-    name: `Træningspas ${sessionsThisWeek.length + 1}`,
-    day: "Mandag",   // standard ugedag
+    name: "Træningspas",
+    day: "Mandag",
     steps: [
       {
         type: "warmup",
@@ -33,7 +33,6 @@ function addSession() {
       },
       {
         type: "run",
-        mode: "simple",
         durationType: "distance",
         distance: 1,
         notes: "",
@@ -59,13 +58,29 @@ function addSession() {
 
 
 /* ============================
+   OPDATER UGEDAG
+   ============================ */
+
+function updateSessionDay(index, day) {
+  const sessions = getSessionsForWeek(selectedWeek);
+  const session = sessions[index];
+  if (!session) return;
+
+  session.day = day;
+
+  renderMain();
+  renderEditor();
+}
+
+
+/* ============================
    STEP TITLER OG SUBTITLER
    ============================ */
 
 function stepTitle(step) {
   switch (step.type) {
     case "warmup": return "Opvarmning";
-    case "run": return step.mode === "interval" ? "Intervaller" : "Løb";
+    case "run": return "Løb";
     case "recovery": return "Restitution";
     case "rest": return "Hvile";
     case "cooldown": return "Nedkøling";
@@ -132,31 +147,15 @@ function renderStepCard(step, index) {
         <div class="step-actions" onclick="event.stopPropagation()">
 
           <span class="step-action-btn" onclick="moveStepUp(${index})">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                 stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                 stroke-linejoin="round">
-              <polyline points="18 15 12 9 6 15"></polyline>
-            </svg>
+            ▲
           </span>
 
           <span class="step-action-btn" onclick="moveStepDown(${index})">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                 stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                 stroke-linejoin="round">
-              <polyline points="6 9 12 15 18 9"></polyline>
-            </svg>
+            ▼
           </span>
 
           <span class="step-action-btn delete" onclick="deleteStep(${index})">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                 stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                 stroke-linejoin="round">
-              <polyline points="3 6 5 6 21 6"></polyline>
-              <path d="M19 6l-1 14H6L5 6"></path>
-              <path d="M10 11v6"></path>
-              <path d="M14 11v6"></path>
-              <path d="M9 6V4h6v2"></path>
-            </svg>
+            🗑
           </span>
 
         </div>
@@ -192,8 +191,16 @@ function renderMain() {
       <div class="session-card ${isSelected ? "selected" : ""}" onclick="selectSession(${idx})">
 
         <div class="session-header">
-          <div class="session-title">${session.name || "Pas"}</div>
-          <div class="session-day">${session.day || "Ugedag ikke valgt"}</div>
+
+          <div class="session-title">Træningspas: ${session.day}</div>
+
+          <select class="session-day-select"
+                  onchange="updateSessionDay(${idx}, this.value)">
+            ${["Mandag","Tirsdag","Onsdag","Torsdag","Fredag","Lørdag","Søndag"]
+              .map(d => `<option value="${d}" ${d === session.day ? "selected" : ""}>${d}</option>`)
+              .join("")}
+          </select>
+
         </div>
 
         <div class="session-steps">
@@ -205,6 +212,13 @@ function renderMain() {
   });
 
   main.innerHTML = html;
+
+  // Opdater overskrift
+  const current = sessions[selectedSessionIndex];
+  if (current) {
+    document.getElementById("mainTitle").textContent =
+      `Træningspas: ${current.day}`;
+  }
 }
 
 
@@ -226,3 +240,4 @@ function selectSession(index) {
 window.addSession = addSession;
 window.renderMain = renderMain;
 window.selectSession = selectSession;
+window.updateSessionDay = updateSessionDay;
