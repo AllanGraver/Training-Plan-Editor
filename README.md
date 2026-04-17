@@ -1,5 +1,6 @@
 
 # Running Training Editor
+- Husk, et mål uden en plan er blot en drøm
 
 Dette projekt indeholder en browserbaseret editor til opbygning og redigering af **løbetræning**.
 
