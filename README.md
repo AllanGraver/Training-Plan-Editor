@@ -2,7 +2,7 @@
 # Training Plan Generator
 - Husk, et mål uden en plan er blot en drøm
 
-Dette projekt indeholder en browserbaseret editor til opbygning og redigering af **løbetræning**.
+Dette projekt indeholder en browserbaseret editor til opbygning og redigering af planer til **løbetræning**.
 
 Fokus er på **enkelt overblik**, **struktureret træning** og en **UI‑opbygning inspireret af Garmin/Strava**, hvor træningen er sammensat af tydelige trin som **Opvarmning, Løb og Nedkøling**.
 
