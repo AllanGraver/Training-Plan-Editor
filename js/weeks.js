@@ -21,7 +21,7 @@ function getMaxWeekInPlan() {
    ============================ */
 
 function renderWeeks() {
-  const container = document.getElementById("weekList");
+  const container = document.getElementById("weekButtons");
   if (!container) return;
 
   container.innerHTML = "";
