@@ -95,6 +95,10 @@ window.initApp = initApp;
 window.getSessionsForWeek = getSessionsForWeek;
 window.getCurrentSession = getCurrentSession;
 
+
 window.addEventListener("DOMContentLoaded", () => {
   if (window.renderLibrary) renderLibrary();
+  if (window.renderWeeks) renderWeeks();
+  if (window.renderMain) renderMain();
+  if (window.renderEditor) renderEditor();
 });
