@@ -689,14 +689,6 @@ body.dark-mode .delete-plan:hover {
   color: #ffffff !important;
 }
 
-/* Valgt uge: sort ramme + lidt anderledes grå */
-.week-btn.selected {
-  background: #3a404a !important;
-  border: 2px solid #000 !important;  /* ✅ sort ramme */
-  color: #ffffff !important;
-  position: relative;
-}
-
 /* Valgfri Strava accent: lille orange stripe til venstre */
 .week-btn.selected::before {
   content: "";
@@ -706,11 +698,19 @@ body.dark-mode .delete-plan:hover {
   bottom: 8px;
   width: 4px;
   border-radius: 10px;
-  background: #fc4c02; /* Strava orange accent */
+  display:
 }
 
 /* Sørg for at gamle dark-mode week-button regler ikke påvirker */
 body.dark-mode .week-button,
 body.dark-mode .week-button.active {
   all: unset;
+}
+
+/* Valgt uge: Strava-orange ramme */
+.week-btn.selected {
+  border: 2px solid #fc4c02 !important;   /* ✅ orange ramme */
+  background: #3a404a !important;         /* behold mørkegrå */
+  color: #fff !important;
+  position: relative;
 }
