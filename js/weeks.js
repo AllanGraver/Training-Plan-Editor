@@ -28,6 +28,8 @@ function renderWeeks() {
 
   const maxWeek = getMaxWeekInPlan();
 
+
+  // Uge-knapper
   for (let w = 1; w <= maxWeek; w++) {
     const btn = document.createElement("button");
     btn.className = "week-btn";
@@ -40,6 +42,17 @@ function renderWeeks() {
     btn.onclick = () => selectWeek(w);
     container.appendChild(btn);
   }
+
+  // ✅ Tilføj uge-knap (sidst)
+  const addBtn = document.createElement("button");
+  addBtn.className = "week-btn add-week-btn";
+  addBtn.textContent = "+ Tilføj uge";
+  addBtn.onclick = (e) => {
+    e.stopPropagation();
+    addWeek();
+  };
+
+  container.appendChild(addBtn);
 }
 
 /* ============================
