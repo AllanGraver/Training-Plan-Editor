@@ -173,6 +173,29 @@ body {
   color: white;
   border: 2px solid black !important;
 }
+.week-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.week-spacer {
+  height: 10px; /* 👈 luft mellem ugerne og knappen */
+}
+
+.add-week-btn {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px dashed #bbb;
+  background: #f6f6f6;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.add-week-btn:hover {
+  background: #efefef;
+}
 
 /* =====================================================
    MAIN PANEL
