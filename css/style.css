@@ -562,3 +562,75 @@ body.dark-mode #addSessionBtn {
 body.dark-mode #addSessionBtn:hover {
   background: #444;
 }
+
+
+/* =========================================
+   STRAVA-INSPIRERET UGE-LISTE (NAVIGATION)
+   - Uger skal se anderledes ud end action-knapper
+   ========================================= */
+
+:root {
+  --strava-orange: #fc4c02;
+  --charcoal: #111827;       /* mørk neutral */
+  --slate: #374151;          /* sekundær tekst */
+  --panel: #f3f4f6;          /* lys panel baggrund */
+  --card: #ffffff;           /* kort/knap baggrund */
+  --border: #e5e7eb;         /* diskret kant */
+}
+
+/* Container: lodret liste */
+#weekButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 6px 0;
+}
+
+/* Ugeknapper: "liste-element" (ikke action-knap) */
+.week-btn {
+  width: 100%;
+  text-align: left;
+  padding: 10px 12px;
+  border-radius: 10px;
+
+  /* anderledes end dine normale knapper */
+  background: linear-gradient(180deg, var(--card), #fbfbfb);
+  border: 1px solid var(--border);
+
+  color: var(--charcoal);
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.05s ease;
+}
+
+/* Hover: subtil (ikke fuld orange som action-knap) */
+.week-btn:hover {
+  border-color: #d1d5db;
+  background: linear-gradient(180deg, #ffffff, #f8fafc);
+}
+
+/* Klik-følelse */
+.week-btn:active {
+  transform: translateY(1px);
+}
+
+/* Valgt uge: sort ramme + strava-orange accent */
+.week-btn.selected {
+  border: 2px solid #000;                 /* ✅ din ønskede sorte ramme */
+  background: #fff7f2;                    /* lys orange tone */
+  position: relative;
+}
+
+/* Lille orange accent-stribe i venstre side (Strava vibe) */
+.week-btn.selected::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 4px;
+  border-radius: 10px;
+  background: var(--strava-orange);
+}
