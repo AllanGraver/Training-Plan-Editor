@@ -127,8 +127,9 @@ body {
   background: #ffe9dd;
 }
 
-/* Sidebar-knapper */
-#sidebar button {
+
+/* Sidebar action-knapper (Ny/Gem/Import/Export) */
+#sidebar .sidebar-actions button {
   padding: 5px 8px;
   font-size: 13px;
   margin-top: 4px;
@@ -141,10 +142,11 @@ body {
   border: none;
 }
 
-#sidebar button:hover {
+#sidebar .sidebar-actions button:hover {
   background: #e04402;
   transform: translateY(-1px);
 }
+
 
 /* =====================================================
    WEEK BUTTONS
