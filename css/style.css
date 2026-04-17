@@ -394,6 +394,8 @@ textarea:focus {
   overflow-y: auto;
   font-family: monospace;
   font-size: 12px;
+  order: 2px solid #fff;
+  box-shadow: 0 0 0 1px rgba(0,0,0
 }
 
 /* =====================================================
