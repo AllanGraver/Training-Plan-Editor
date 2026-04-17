@@ -179,12 +179,18 @@ function deleteStep(index) {
   if (!session) return;
 
   const step = session.steps[index];
-
-  if (step.blockId) {
+  
+// Hvis det er et anker: slet hele blokken
+  if (step.blockId && step.blockAnchor) {
     session.steps = session.steps.filter(s => s.blockId !== step.blockId);
-  } else {
+  } 
+  // Hvis det blot er et medlem i blokken: slet kun dette trin
+  else {
     session.steps.splice(index, 1);
   }
+
+  // ✅ re-beregn blokke (opløs/tilpas medlemskab)
+  recomputeIntervalBlocks(session);
 
   if (session.steps.length === 0) {
     deleteSession(selectedSessionIndex);
@@ -200,12 +206,12 @@ function moveStepUp(index) {
   if (!session) return;
 
   const step = session.steps[index];
+  
+// flyt enkelt-trin
+  moveSingleStep(index, -1);
 
-  if (step.blockId) {
-    moveBlock(step.blockId, -1);
-  } else {
-    moveSingleStep(index, -1);
-  }
+  // ✅ auto ind/ud af intervalrammen
+  recomputeIntervalBlocks(session);
 
   renderMain();
   renderEditor();
@@ -216,12 +222,12 @@ function moveStepDown(index) {
   if (!session) return;
 
   const step = session.steps[index];
+  
+// flyt enkelt-trin
+  moveSingleStep(index, 1);
 
-  if (step.blockId) {
-    moveBlock(step.blockId, 1);
-  } else {
-    moveSingleStep(index, 1);
-  }
+  // ✅ auto ind/ud af intervalrammen
+  recomputeIntervalBlocks(session);
 
   renderMain();
   renderEditor();
