@@ -48,12 +48,12 @@ function renderWeeks() {
    
   // Luft (spacer)
   const spacer = document.createElement("div");
-  spacer.className = "week-spacer";
+  spacer.style.height = "10px";
   container.appendChild(spacer);
 
   // ✅ Tilføj uge-knap (sidst)
   const addBtn = document.createElement("button");
-  addBtn.className = "week-btn add-week-btn";
+  addBtn.className = "add-week-btn";
   addBtn.textContent = "+ Tilføj træningsuge";
   addBtn.onclick = (e) => {
     e.stopPropagation();
@@ -70,6 +70,12 @@ function renderWeeks() {
 function selectWeek(week) {
   selectedWeek = week;
   selectedSessionIndex = null;
+  
+  // ✅ vigtig: opdater ugeknappernes "selected" visuelt
+  renderWeeks();
+
+  // fortsæt som før
+
   renderSessionsForWeek();
 }
 
