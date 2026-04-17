@@ -14,12 +14,12 @@
   <div class="app-shell">
     <!-- VENSTRE PANEL / SIDEBAR -->
     <aside id="sidebar">
-      <h3>Planer</h3>
+      <h3>Træningsplaner:</h3>
       <div id="planList"></div>
 
-      <button onclick="createNewPlan()">+ Ny plan</button>
+      <button onclick="newPlan()">+ Ny træningsplan</button>
 
-      <h3>Uger</h3>
+      <h3>Træningsuge oversigt:</h3>
       <div id="weekButtons"></div>
     </aside>
 
@@ -32,7 +32,7 @@
 
     <!-- HØJRE PANEL / EDITOR -->
     <aside id="editorPanel">
-      <div id="sessionEditor">Vælg et pas…</div>
+      <div id="sessionEditor">Vælg et træningspas…</div>
 
       <h3>JSON preview</h3>
       <pre id="jsonPreview"></pre>
@@ -43,6 +43,7 @@
   <script src="js/sessions.js"></script>
   <script src="js/steps.js"></script>
   <script src="js/segments.js"></script>
+  <script src="js/library.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
