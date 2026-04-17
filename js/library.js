@@ -26,7 +26,7 @@ function saveLibrary(lib) {
 
 function renderLibrary() {
   const lib = loadLibrary();
-  const div = document.getElementById("sidebarPlans");
+  const div = document.getElementById("planList");
   if (!div) return;
 
   div.innerHTML = "";
