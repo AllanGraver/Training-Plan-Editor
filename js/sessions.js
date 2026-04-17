@@ -386,7 +386,7 @@ function renderMain() {
 
   const current = sessions[selectedSessionIndex];
   if (current) {
-    document.getElementById("mainTitle").textContent = "Træningspas";
+    document.getElementById("mainTitle").textContent = "Ugens træningspas";
   }
 }
 
