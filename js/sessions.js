@@ -357,7 +357,7 @@ function renderMain() {
       <div class="session-card ${isSelected ? "selected" : ""}" onclick="selectSession(${idx})">
 
         <div class="session-header">
-          <div class="session-title">Træningspas: ${session.day}</div>
+          <div class="session-title">Træningspas ${idx + 1}:</div>
 
           <select class="session-day-select"
                   onchange="updateSessionDay(${idx}, this.value); event.stopPropagation();">
@@ -385,7 +385,7 @@ function renderMain() {
   const current = sessions[selectedSessionIndex];
   if (current) {
     document.getElementById("mainTitle").textContent =
-      `Træningspas: ${current.day}`;
+      `Træningspas ${selectedSessionIndex + 1}:`;
   }
 }
 
