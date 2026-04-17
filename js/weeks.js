@@ -37,7 +37,7 @@ function renderWeeks() {
   for (let w = 1; w <= maxWeek; w++) {
     const btn = document.createElement("button");
     btn.className = "week-btn";
-    btn.textContent = `Uge ${w}`;
+    btn.textContent = `Træningsuge ${w}`;
 
     if (w === selectedWeek) btn.classList.add("selected");
 
