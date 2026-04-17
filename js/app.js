@@ -121,9 +121,11 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 function initGoalsPanel() {
+  ensurePlanDefaults();
+   
   const dateInput = document.getElementById("raceDateInput");
   const weeksSelect = document.getElementById("weeksCountSelect");
-  if (!dateInput || !weeksSelect) return;
+  if (!weeksSelect) return;
 
   // Sørg for plan findes
   window.plan = window.plan || {
@@ -133,25 +135,40 @@ function initGoalsPanel() {
     sessions: []
   };
 
-  // 1) Fyld dropdown med antal uger (1..24)
+  // 1) Fyld dropdown med antal uger (1..36)
   weeksSelect.innerHTML = "";
-  for (let i = 1; i <= 24; i++) {
+  for (let i = 1; i <= 36; i++) {
     const opt = document.createElement("option");
     opt.value = String(i);
     opt.textContent = String(i);
     weeksSelect.appendChild(opt);
   }
 
-  // 2) Sæt standardværdier (default 1 uge)
-  const currentWeeks = Number(plan.duration_weeks || 1);
+  // ✅ Default = 12 (hvis plan.duration_weeks ikke er sat)
+  const currentWeeks = Number(plan.duration_weeks);
+  const defaultWeeks = (currentWeeks && currentWeeks >= 1) ? currentWeeks : 12;
+  
+  
+  // clamp så vi aldrig står udenfor 1..36
+  const safeWeeks = clamp(defaultWeeks, 1, 36);
+  plan.duration_weeks = safeWeeks;
   weeksSelect.value = String(currentWeeks);
 
   // 3) Sæt konkurrencedato hvis den findes (vi gemmer som ISO: yyyy-mm-dd)
-  if (plan.race_date) {
-    dateInput.value = plan.race_date;
-  } else {
-    dateInput.value = ""; // ingen valgt
+  if (dateinput) {
+    dateInput.value = plan.race_date || "";
+    dateInput.addEventListener("change", () => {
+      plan.race_date = dateInput.value || null;
+      if (typeof renderWeeks === "function") renderWeeks();
+    });
   }
+
+// ✅ Når antal uger ændres: opret/slet automatisk (via setDurationWeeks)
+  weeksSelect.addEventListener("change", () => {
+    setDurationWeeks(weeksSelect.value);
+  });
+}
+
 
   // 4) Event handlers
   dateInput.addEventListener("change", () => {
