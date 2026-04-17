@@ -386,8 +386,7 @@ function renderMain() {
 
   const current = sessions[selectedSessionIndex];
   if (current) {
-    document.getElementById("mainTitle").textContent =
-      `Træningspas ${selectedSessionIndex + 1}:`;
+    document.getElementById("mainTitle").textContent = "Træningspas";
   }
 }
 
