@@ -174,13 +174,20 @@ function savePlan() {
    ============================ */
 
 function savePlanAs() {
-  const name = prompt("Navn på ny træningsplan:");
+  if (!window.plan) {
+    alert("Der er ingen aktiv plan at gemme endnu.");
+    return;
+  }
+
+  const name = prompt("Navn på ny træningsplan:", plan.plan_name || "");
   if (!name) return;
 
-  plan.plan_name = name;
+  // lav en dyb kopi, så biblioteket ikke deler reference
+  const copy = JSON.parse(JSON.stringify(plan));
+  copy.plan_name = name;
 
   const lib = loadLibrary();
-  lib[name] = plan;
+  lib[name] = copy;
   saveLibrary(lib);
 
   loadPlan(name);
