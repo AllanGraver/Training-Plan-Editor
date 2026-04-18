@@ -1,33 +1,21 @@
+
 "use strict";
 /* =========================================================
    FILE: weeks.js
    PURPOSE:
    - Håndterer uge-listen i venstre panel
-   - Viser uger baseret på plan.sessions
+   - Viser uger baseret på plan.duration_weeks
    - Skift af selectedWeek og kald til renderSessionsForWeek()
    ========================================================= */
 
 /* ============================
-   BEREGN ANTAL UGER
-   ============================ */
-
-function getMaxWeekInPlan() {
-  if (!plan.sessions || plan.sessions.length === 0) return 1;
-  return Math.max(...plan.sessions.map(s => s.week || 1));
-}
-
-/* ============================
-   Jeg parser datoen som lokal dato (ikke UTC), så du undgår “dato hopper en dag” problemer.
+   DATE HELPERS (lokal tid – ingen UTC-hop)
    ============================ */
 
 function parseISODateLocal(iso) {
   // iso = "yyyy-mm-dd"
   if (!iso || typeof iso !== "string") return null;
-  const parts = iso.split("-");
-  if (parts.length !== 3) return null;
-  const y = Number(parts[0]);
-  const m = Number(parts[1]);
-  const d = Number(parts[2]);
+  const [y, m, d] = iso.split("-").map(Number);
   if (!y || !m || !d) return null;
   return new Date(y, m - 1, d); // lokal tid
 }
@@ -42,10 +30,29 @@ function addDays(date, days) {
 function startOfISOWeek(date) {
   const d = new Date(date);
   d.setHours(0, 0, 0, 0);
-  const day = d.getDay(); // 0=Sun,1=Mon,...6=Sat
-  const diffToMonday = (day + 6) % 7; // Mon->0, Tue->1,... Sun->6
-  d.setDate(d.getDate() - diffToMonday);
+  const day = (d.getDay() + 6) % 7; // Mon=0 ... Sun=6
+  d.setDate(d.getDate() - day);
   return d;
+}
+
+function getISOWeekInfo(date) {
+  const d = new Date(date);
+  d.setHours(0, 0, 0, 0);
+
+  // Flyt til torsdag i samme uge
+  d.setDate(d.getDate() + 3 - ((d.getDay() + 6) % 7));
+  const isoYear = d.getFullYear();
+
+  const week1 = new Date(isoYear, 0, 4);
+  week1.setHours(0, 0, 0, 0);
+
+  const isoWeek =
+    1 +
+    Math.round(
+      ((d - week1) / 86400000 - 3 + ((week1.getDay() + 6) % 7)) / 7
+    );
+
+  return { isoWeek, isoYear };
 }
 
 function formatDateDK(date) {
@@ -53,6 +60,36 @@ function formatDateDK(date) {
   const dd = String(date.getDate()).padStart(2, "0");
   const mm = String(date.getMonth() + 1).padStart(2, "0");
   return `${dd}-${mm}`;
+}
+
+/* ============================
+   WEEK LABEL
+   ============================ */
+
+function getTrainingWeekLabel(weekIndex) {
+  // Hvis ingen konkurrencedato → fallback
+  if (!plan.race_date) {
+    return `Træningsuge ${weekIndex}`;
+  }
+
+  const raceDate = parseISODateLocal(plan.race_date);
+  if (!raceDate || isNaN(raceDate.getTime())) {
+    return `Træningsuge ${weekIndex}`;
+  }
+
+  const totalWeeks = Number(plan.duration_weeks || 12);
+
+  // Sidste uge = ISO-ugen der indeholder konkurrencedatoen
+  const lastWeekStart = startOfISOWeek(raceDate);
+
+  // Uge N har offset 0, uge 1 har offset -(N-1)
+  const offsetWeeks = weekIndex - totalWeeks;
+  const start = addDays(lastWeekStart, offsetWeeks * 7);
+  const end = addDays(start, 6);
+
+  const { isoWeek, isoYear } = getISOWeekInfo(start);
+
+  return `Træningsuge ${weekIndex} - Kalenderuge ${isoWeek}/${isoYear} (${formatDateDK(start)} - ${formatDateDK(end)})`;
 }
 
 /* ============================
@@ -65,7 +102,6 @@ function renderWeeks() {
 
   container.innerHTML = "";
 
-  // Ugerne skal følge dropdown -> plan.duration_weeks
   const maxWeek = Number(plan.duration_weeks || 12);
 
   for (let w = 1; w <= maxWeek; w++) {
@@ -76,7 +112,6 @@ function renderWeeks() {
     if (w === selectedWeek) btn.classList.add("selected");
 
     btn.onclick = () => selectWeek(w);
-
     container.appendChild(btn);
   }
 }
@@ -88,13 +123,9 @@ function renderWeeks() {
 function selectWeek(week) {
   selectedWeek = week;
   selectedSessionIndex = null;
-  
-  // ✅ vigtig: opdater ugeknappernes "selected" visuelt
-  renderWeeks();
 
-  // fortsæt som før
-
-  renderSessionsForWeek();
+  renderWeeks();           // flyt selected-ramme
+  renderSessionsForWeek(); // renderMain + renderEditor
 }
 
 /* ============================
@@ -122,31 +153,7 @@ function renderSessionsForWeek() {
 /* ============================
    WINDOW EXPORTS
    ============================ */
-/* ============================
-   TILFØJ NY TRÆNINGSUGE
-   ============================ */
 
-function addWeek() {
-  const maxWeek = getMaxWeekInPlan();
-  const newWeek = maxWeek + 1;
-
-  // Tilføj en tom uge (ingen pas endnu)
-  plan.sessions.push({
-    id: Date.now(),
-    week: newWeek,
-    name: "Pas 1",
-    steps: []
-  });
-
-  selectedWeek = newWeek;
-  selectedSessionIndex = null;
-
-  renderWeeks();
-  renderMain();
-  renderEditor();
-}
 window.renderWeeks = renderWeeks;
 window.selectWeek = selectWeek;
 window.renderSessionsForWeek = renderSessionsForWeek;
-window.addWeek = addWeek;
-
