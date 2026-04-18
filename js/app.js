@@ -115,7 +115,7 @@ function initGoalsPanel() {
   
   // Sæt dropdown til planens værdi
   weeksSelect.value = String(plan.duration_weeks);
-  }
+  
   // Race date (valgfrit)
   if (dateInput) {
     dateInput.value = plan.race_date || "";
