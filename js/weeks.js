@@ -89,7 +89,7 @@ function getTrainingWeekLabel(weekIndex) {
 
   const { isoWeek, isoYear } = getISOWeekInfo(start);
 
-  return `Træningsuge ${weekIndex} - Kalenderuge ${isoWeek}/${isoYear} (${formatDateDK(start)} - ${formatDateDK(end)})`;
+  return `Træningsuge ${weekIndex} - Uge ${isoWeek}/${isoYear} (${formatDateDK(start)} - ${formatDateDK(end)})`;
 }
 
 /* ============================
