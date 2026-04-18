@@ -17,6 +17,45 @@ function getMaxWeekInPlan() {
 }
 
 /* ============================
+   Jeg parser datoen som lokal dato (ikke UTC), så du undgår “dato hopper en dag” problemer.
+   ============================ */
+
+function parseISODateLocal(iso) {
+  // iso = "yyyy-mm-dd"
+  if (!iso || typeof iso !== "string") return null;
+  const parts = iso.split("-");
+  if (parts.length !== 3) return null;
+  const y = Number(parts[0]);
+  const m = Number(parts[1]);
+  const d = Number(parts[2]);
+  if (!y || !m || !d) return null;
+  return new Date(y, m - 1, d); // lokal tid
+}
+
+function addDays(date, days) {
+  const d = new Date(date);
+  d.setDate(d.getDate() + days);
+  return d;
+}
+
+// ISO-uge starter mandag
+function startOfISOWeek(date) {
+  const d = new Date(date);
+  d.setHours(0, 0, 0, 0);
+  const day = d.getDay(); // 0=Sun,1=Mon,...6=Sat
+  const diffToMonday = (day + 6) % 7; // Mon->0, Tue->1,... Sun->6
+  d.setDate(d.getDate() - diffToMonday);
+  return d;
+}
+
+function formatDateDK(date) {
+  // dd-mm (uden år)
+  const dd = String(date.getDate()).padStart(2, "0");
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  return `${dd}-${mm}`;
+}
+
+/* ============================
    RENDER UGE-LISTE
    ============================ */
 
@@ -32,7 +71,7 @@ function renderWeeks() {
   for (let w = 1; w <= maxWeek; w++) {
     const btn = document.createElement("button");
     btn.className = "week-btn";
-    btn.textContent = `Træningsuge ${w}`;
+    btn.textContent = getTrainingWeekLabel(w);
 
     if (w === selectedWeek) btn.classList.add("selected");
 
